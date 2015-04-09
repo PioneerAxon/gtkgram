@@ -3,9 +3,9 @@ using Gtk;
 class GtkGramAbout
 {
 	private const string[] authors = {
-					"PioneerAxon (Arth Patel)",
+					"PioneerAxon (Arth)",
 					null};
-	private const string copyright = "\xc2\xa9 PioneerAxon (Arth Palte) <arth.svnit@gmail.com>";
+	private const string copyright = "\xc2\xa9 PioneerAxon (Arth) <arth.svnit@gmail.com>";
 	private const string program_name = "GTK+ gram";
 	private const string version = "0.0.0";
 
