@@ -1,8 +1,9 @@
 public class GtkGramWindow : Gtk.ApplicationWindow
 {
 	private Gtk.Box main_hbox;
-	private Gtk.StackSidebar main_sidebar;
-	private Gtk.Stack main_stack;
+	private GtkGramChatList chat_list;
+	private Gtk.Stack chat_stack;
+	private GtkGramChatManager chat_manager;
 
 	public GtkGramWindow (Gtk.Application app)
 	{
@@ -10,19 +11,19 @@ public class GtkGramWindow : Gtk.ApplicationWindow
 		set_title ("GTK+ gram");
 		main_hbox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 2);
 
-		main_sidebar = new Gtk.StackSidebar ();
-		main_sidebar.width_request = 300;
-		main_sidebar.height_request = 400;
-		main_hbox.pack_start (main_sidebar, false, true, 0);
+		chat_list = new GtkGramChatList ();
+		chat_list.width_request = 300;
+		chat_list.height_request = 400;
+		chat_list.row_selected.connect (chat_selected);
+		main_hbox.pack_start (chat_list, false, true, 0);
 
 		Gtk.Separator sep = new Gtk.Separator (Gtk.Orientation.VERTICAL);
 		main_hbox.pack_start (sep, false, true, 0);
 
-		main_stack = new Gtk.Stack ();
-		main_stack.width_request = 340;
-		main_stack.height_request = 400;
-		main_hbox.pack_start (main_stack);
-		main_sidebar.set_stack (main_stack);
+		chat_stack = new Gtk.Stack ();
+		chat_stack.width_request = 340;
+		chat_stack.height_request = 400;
+		main_hbox.pack_start (chat_stack);
 
 		add (main_hbox);
 		try
@@ -34,5 +35,14 @@ public class GtkGramWindow : Gtk.ApplicationWindow
 			warning ("Error opening icon : %s", e.message);
 		}
 		main_hbox.show_all ();
+
+		chat_manager = new GtkGramChatManager (chat_list, chat_stack);
+	}
+
+	private void chat_selected (Gtk.ListBoxRow? row)
+	{
+		if (row == null)
+			return;
+		chat_stack.set_visible_child_name ((row as GtkGramChat).chat_id);
 	}
 }
