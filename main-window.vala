@@ -23,7 +23,9 @@ public class GtkGramWindow : Gtk.ApplicationWindow
 		chat_stack = new Gtk.Stack ();
 		chat_stack.width_request = 340;
 		chat_stack.height_request = 400;
-		main_hbox.pack_start (chat_stack);
+		chat_stack.margin_bottom = 6;
+		chat_stack.set_transition_type (Gtk.StackTransitionType.SLIDE_UP_DOWN);
+		main_hbox.pack_start (chat_stack, true, true, 2);
 
 		add (main_hbox);
 		try
