@@ -9,7 +9,7 @@ public class GtkGramChat : Gtk.ListBoxRow
 		}
 		private set
 		{
-			chat_name_label.set_label (value);
+			chat_name_label.set_markup ("<b>" + value + "</b>");
 			_chat_name = value;
 		}
 	}
@@ -23,8 +23,11 @@ public class GtkGramChat : Gtk.ListBoxRow
 		}
 		private set
 		{
-			//FIXME: Show date and year for older chats
-			chat_time_label.set_label (value.format ("%k:%M"));
+			var now = new GLib.DateTime.now_local ();
+			if (now.difference (value) < GLib.TimeSpan.DAY)
+				chat_time_label.set_label (value.format ("%k:%M %p"));
+			else
+				chat_time_label.set_label (value.format ("%d/%m/%Y"));
 			_chat_time = value;
 		}
 	}
@@ -45,6 +48,9 @@ public class GtkGramChat : Gtk.ListBoxRow
 
 		//FIXME: Add file name handling here
 		chat_image = new Gtk.Image.from_file ("");
+		chat_image.width_request = 50;
+		chat_image.height_request = 50;
+		chat_image.expand = false;
 		//FIXME: Fix Image width and height here
 		chat_name_label = new Gtk.Label ("");
 		chat_time_label = new Gtk.Label ("");
