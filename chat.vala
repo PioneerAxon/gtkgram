@@ -34,31 +34,50 @@ public class GtkGramChat : Gtk.ListBoxRow
 
 	public string chat_id { get; private set; }
 
+	public string chat_image
+	{
+		set
+		{
+			try
+			{
+				Gdk.Pixbuf image = new Gdk.Pixbuf.from_file_at_size (value, 50, 50);
+				_chat_image.clear ();
+				_chat_image.set_from_pixbuf (image);
+			}
+			catch (Error e)
+			{
+				warning ("Unable to load chat_image for %s : file %s : %s", chat_name, "", e.message);
+			}
+		}
+	}
+
 	public GtkGramChatBox chat_box { get; private set; }
 	
-	private Gtk.Image chat_image;
+	private Gtk.Image _chat_image;
 	private Gtk.Label chat_name_label;
 	private Gtk.Label chat_time_label;
 	private Gtk.Label chat_text_label;
+	private bool is_group;
 
 	public GtkGramChat (string chat_id, string chat_name = "Default chat", int64 chat_time = 0)
 	{
 		Object ();
 		chat_box = new GtkGramChatBox ();
 
-		//FIXME: Add file name handling here
-		chat_image = new Gtk.Image.from_file ("");
-		chat_image.width_request = 50;
-		chat_image.height_request = 50;
-		chat_image.expand = false;
-		//FIXME: Fix Image width and height here
+		if (is_group)
+			_chat_image = new Gtk.Image.from_icon_name ("system-users-symbolic", Gtk.IconSize.DIALOG);
+		else
+			_chat_image = new Gtk.Image.from_icon_name ("avatar-default-symbolic", Gtk.IconSize.DIALOG);
+		_chat_image.width_request = 50;
+		_chat_image.height_request = 50;
+		_chat_image.expand = false;
 		chat_name_label = new Gtk.Label ("");
 		chat_time_label = new Gtk.Label ("");
 		//FIXME: Add last chat message content here
 		chat_text_label = new Gtk.Label ("");
 
 		var hbox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
-		hbox.pack_start (chat_image, false, true, 3);
+		hbox.pack_start (_chat_image, false, true, 3);
 		var vbox = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
 		var name_hbox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
 		name_hbox.pack_start (chat_name_label, false, false, 2);
