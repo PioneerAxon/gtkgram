@@ -54,11 +54,21 @@ public class GtkGramChatBox : Gtk.Box
 	{
 		spinner.show ();
 		spinner.start ();
+		chat_input.sensitive = false;
+		upload_file.sensitive = false;
+		upload_image.sensitive = false;
+		emoticons.sensitive = false;
+		send_text.sensitive = false;
 	}
 
 	private void spinner_hide ()
 	{
 		spinner.stop ();
 		spinner.hide ();
+		chat_input.sensitive = true;
+		upload_file.sensitive = true;
+		upload_image.sensitive = true;
+		emoticons.sensitive = true;
+		send_text.sensitive = true;
 	}
 }
