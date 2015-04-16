@@ -32,3 +32,8 @@ gtkgram_LDADD = \
 		-lcrypto\
 		-levent
 
+tgl/libs/libtgl.a:tgl/Makefile
+	cd tgl; make
+
+tgl/Makefile:tgl/Makefile.in tgl/configure
+	cd tgl; ./configure --enable-libevent
