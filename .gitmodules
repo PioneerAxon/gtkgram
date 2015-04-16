@@ -1,3 +1,6 @@
 [submodule "tgl"]
 	path = tgl
 	url = https://github.com/vysheng/tgl.git
+[submodule "vala-extra-vapis"]
+	path = vala-extra-vapis
+	url = https://github.com/nemequ/vala-extra-vapis.git
