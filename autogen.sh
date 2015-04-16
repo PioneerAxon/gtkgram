@@ -4,7 +4,7 @@
 srcdir=`dirname $0`
 test -z "$srcdir" && srcdir=.
 
-PKG_NAME="gnome-calculator"
+PKG_NAME="gtkgram"
 REQUIRED_AUTOMAKE_VERSION=1.7
 
 which gnome-autogen.sh || {
