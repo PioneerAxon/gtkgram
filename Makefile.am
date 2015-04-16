@@ -1,10 +1,15 @@
 bin_PROGRAMS = gtkgram
 
 AM_CPPFLAGS= \
+	     -DVERSION=\""$(VERSION)"\" \
+	     -DGETTEXT_PACKAGE=\"$(GETTEXT_PACKAGE)\" \
 	     -w \
 	     $(GTKGRAM_CFLAGS)
 
 gtkgram_SOURCES = \
+		  vala-extra-vapis/libevent.vapi\
+		  tgl.vapi\
+		  config.vapi\
 		  about.vala\
 		  chat-box.vala\
 		  chat-list.vala\
@@ -12,7 +17,6 @@ gtkgram_SOURCES = \
 		  chat.vala\
 		  gtkgram.vala\
 	  	  main-window.vala\
-		  tgl.vapi\
 		  ui_strings.vala
 
 gtkgram_VALAFLAGS = \

@@ -6,8 +6,8 @@ class GtkGramAbout
 					"PioneerAxon (Arth)",
 					null};
 	private const string copyright = "\xc2\xa9 PioneerAxon (Arth) <arth.svnit@gmail.com>";
-	private const string program_name = "GTK+ gram";
-	private const string version = "0.0.0";
+	private const string program_name = GETTEXT_PACKAGE;
+	private const string version = VERSION;
 
 	public static void show (Gtk.Window parent)
 	{
