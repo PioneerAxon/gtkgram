@@ -7,7 +7,6 @@ AM_CPPFLAGS= \
 	     $(GTKGRAM_CFLAGS)
 
 gtkgram_SOURCES = \
-		  vala-extra-vapis/libevent.vapi\
 		  tgl.vapi\
 		  config.vapi\
 		  about.vala\
@@ -30,5 +29,6 @@ gtkgram_LDADD = \
 		-lm\
 	     	-ldl\
 	       	-lssl\
-	       	-lcrypto
+		-lcrypto\
+		-levent
 
