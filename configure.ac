@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT(gtkgram, 0.0.0)
+AC_INIT(GTK+ gram, 0.0.0)
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([1.11 no-dist-gzip dist-xz foreign])
 AM_SILENT_RULES([yes])
@@ -30,7 +30,7 @@ dnl ###########################################################################
 dnl Internationalization
 dnl ###########################################################################
 
-AC_SUBST(GETTEXT_PACKAGE, gtkgram)
+AC_SUBST(GETTEXT_PACKAGE, GTK+gram)
 
 dnl ###########################################################################
 dnl Documentation
