@@ -5,6 +5,9 @@ class GtkGramAbout
 	private const string[] authors = {
 					"PioneerAxon (Arth)",
 					null};
+	private const string[] artists = {
+					"Mike Meseguer",
+					null};
 	private const string copyright = "\xc2\xa9 PioneerAxon (Arth) <arth.svnit@gmail.com>";
 	private const string program_name = GETTEXT_PACKAGE;
 	private const string version = VERSION;
@@ -21,6 +24,7 @@ class GtkGramAbout
 				"license-type", Gtk.License.GPL_3_0,
 				"comments", "A GTK+ client for Telegram",
 				"authors", authors,
+				"artists", artists,
 				"logo", new Gdk.Pixbuf.from_file_at_scale ("logo.png", 200, 200, true));
 		}
 		catch (Error e)
