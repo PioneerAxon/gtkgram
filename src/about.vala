@@ -25,7 +25,7 @@ class GtkGramAbout
 				"comments", "A GTK+ client for Telegram",
 				"authors", authors,
 				"artists", artists,
-				"logo", new Gdk.Pixbuf.from_file_at_scale ("logo.png", 200, 200, true));
+				"logo", new Gdk.Pixbuf.from_resource_at_scale ("/org/gtkgram/logo.png", 256, 256, true));
 		}
 		catch (Error e)
 		{
