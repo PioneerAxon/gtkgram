@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-	<gresource prefix="/org/gnome/calculator">
+	<gresource prefix="/org/gtkgram">
 		<file>logo.png</file>
 		<file>rsa.pub</file>
 	</gresource>
