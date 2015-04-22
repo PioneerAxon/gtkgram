@@ -22,8 +22,10 @@ namespace Telegram
 
 		public void init ();
 
-//		[CCode (cname = "tgl_set_ev_base")]
-//		public void set_event_base (Event.Base event_base);
+		public void login ();
+
+		[CCode (cname = "tgl_set_ev_base")]
+		public void set_event_base (LibEvent.Base event_base);
 
 		[CCode (cname = "tgl_set_net_methods")]
 		public void set_network_methods (TelegramNetworkMethods net_methods);

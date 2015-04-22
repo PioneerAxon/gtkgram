@@ -7,6 +7,7 @@ AM_CPPFLAGS= \
 	     $(GTKGRAM_CFLAGS)
 
 gtkgram_SOURCES = \
+		  libevent.vapi\
 		  tgl.vapi\
 		  config.vapi\
 		  about.vala\
