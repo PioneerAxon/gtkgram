@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+	<gresource prefix="/org/gnome/calculator">
+		<file>logo.png</file>
+		<file>rsa.pub</file>
+	</gresource>
+</gresources>
+

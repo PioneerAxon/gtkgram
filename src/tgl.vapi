@@ -1,4 +1,4 @@
-[CCode (cheader_filename="tgl/tgl.h,tgl/tgl-timers.h,tgl/tgl-net.h")]
+[CCode (cheader_filename="../tgl/tgl.h,../tgl/tgl-timers.h,../tgl/tgl-net.h")]
 namespace Telegram
 {
 	[CCode (cname = "struct tgl_state", cprefix="tgl_", free_function = "tgl_free_all", has_type_id = false)]
