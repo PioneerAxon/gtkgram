@@ -61,6 +61,7 @@ public class GtkGramWindow : Gtk.ApplicationWindow
 		main_hbox.show_all ();
 
 		chat_manager = new GtkGramChatManager (chat_list, chat_stack);
+		this.destroy.connect (window_destroy);
 	}
 
 	private void chat_selected (Gtk.ListBoxRow? row)
@@ -68,5 +69,10 @@ public class GtkGramWindow : Gtk.ApplicationWindow
 		if (row == null)
 			return;
 		chat_stack.set_visible_child_name ((row as GtkGramChat).chat_id);
+	}
+
+	public void window_destroy ()
+	{
+		chat_manager.destroy ();
 	}
 }

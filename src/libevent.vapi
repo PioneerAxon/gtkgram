@@ -24,7 +24,7 @@
 
 [CCode (cheader_filename = "event2/event.h")]
 namespace LibEvent {
-  [CCode (cname = "struct event_base", cheader_filename = "event2/event.h")]
+  [CCode (cname = "struct event_base", cprefix="event_base_", cheader_filename = "event2/event.h")]
   [Compact]
   public class Base {
     public Base ();

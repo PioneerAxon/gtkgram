@@ -1,4 +1,4 @@
-[CCode (cheader_filename="../tgl/tgl.h,../tgl/tgl-timers.h,../tgl/tgl-net.h")]
+[CCode (cheader_filename="../tgl/tgl.h,../tgl/tgl-timers.h,../tgl/tgl-net.h,tgl-wrapper.h")]
 namespace Telegram
 {
 	[CCode (cname = "struct tgl_state", cprefix="tgl_", free_function = "tgl_free_all", has_type_id = false)]
@@ -20,6 +20,7 @@ namespace Telegram
 
 		public void enable_ipv6 ();
 
+		[CCode (cname = "tw_init")]
 		public void init ();
 
 		public void login ();

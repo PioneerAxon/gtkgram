@@ -23,6 +23,8 @@ gtkgram_SOURCES = \
 		  gtkgram.vala\
 	  	  main-window.vala\
 		  ui_strings.vala\
+		  service.vala\
+		  tgl-wrapper.c\
 		  $(BUILT_SOURCES)
 
 gtkgram_VALAFLAGS = \

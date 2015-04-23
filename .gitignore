@@ -2,6 +2,7 @@
 Makefile
 Makefile.in
 *.c
+!src/tgl-wrapper.c
 *.o
 gtkgram
 config.log
