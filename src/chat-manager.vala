@@ -6,12 +6,14 @@ public class GtkGramChatManager
 	private static Gtk.Stack _stack;
 	private static TelegramState t_state;
 	private static LibEvent.Base ev_base;
-	private static GtkGramService service;
+	private static Gtk.ApplicationWindow _main_window;
+	private static GtkGramLogin login;
 
-	public GtkGramChatManager (owned GtkGramChatList list, owned Gtk.Stack stack)
+	public GtkGramChatManager (owned GtkGramChatList list, owned Gtk.Stack stack, owned Gtk.ApplicationWindow main_window)
 	{
 		_list = list;
 		_stack = stack;
+		_main_window = main_window;
 		ev_base = new LibEvent.Base ();
 
 		t_state = new TelegramState ();
@@ -23,10 +25,48 @@ public class GtkGramChatManager
 		t_state.register_app_id (2899, "36722c72256a24c1225de00eb6a1ca74");
 		t_state.set_app_string ("gtkgram 0.0.0");
 		t_state.init ();
+		login = null;
+		t_state.login_assistant_init_register (()=>{
+			if (login != null)
+				return;
+			login = new GtkGramLogin (t_state);
+			login.set_transient_for (_main_window);
+			login.set_modal (true);
+			login.cancel.connect (()=>{
+				login.destroy ();
+				login = null;
+				GLib.TimeVal time = TimeVal ();
+				time.tv_sec = time.tv_usec = 0;
+				ev_base.loopexit (time);
+			});
+		});
+		t_state.login_get_phone_register (()=>{
+			if (login.is_visible ())
+			{
+				login.get_phone ();
+			}
+			else
+				login.show_all ();
+		});
+		t_state.login_get_name_register (()=>{
+			if (login.is_visible ())
+			{
+				login.get_username ();
+			}
+		});
+		t_state.login_get_otp_register (()=>{
+			if (login.is_visible ())
+			{
+				login.get_otp ();
+			}
+		});
+		t_state.login_destroy_register (()=>{
+			if (login != null && login.is_visible ())
+				login.destroy ();
+			//TODO: save current state so that we don't have to login again.
+		});
+		GLib.Timeout.add (50, ev_base_loop);
 		t_state.login ();
-
-		service = new GtkGramService (t_state, ev_base);
-		service.start_ev_loop ();
 	}
 
 	public void add_chat (string chat_id, string chat_name = "", int chat_time = 0)
@@ -39,8 +79,15 @@ public class GtkGramChatManager
 		_list.invalidate_sort ();
 	}
 
+	public bool ev_base_loop ()
+	{
+		ev_base.loop (LibEvent.LoopFlags.NONBLOCK);
+		return !(ev_base.got_exit () || ev_base.got_break ());
+	}
+
 	public void destroy ()
 	{
-		service.stop_ev_loop ();
+		if (login != null && login.is_visible ())
+			login.destroy ();
 	}
 }

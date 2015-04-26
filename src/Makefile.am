@@ -23,7 +23,7 @@ gtkgram_SOURCES = \
 		  gtkgram.vala\
 	  	  main-window.vala\
 		  ui_strings.vala\
-		  service.vala\
+		  login-assistant.vala\
 		  tgl-wrapper.c\
 		  $(BUILT_SOURCES)
 

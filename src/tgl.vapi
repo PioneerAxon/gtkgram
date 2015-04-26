@@ -23,6 +23,48 @@ namespace Telegram
 		[CCode (cname = "tw_init")]
 		public void init ();
 
+		[CCode (cname = "tw_login_init", has_target = "false")]
+		public delegate void LoginAssistantInitFunc ();
+
+		[CCode (cname = "tw_register_login_init")]
+		public void login_assistant_init_register (LoginAssistantInitFunc func);
+
+		[CCode (cname = "tw_login_get_phone", has_target = "false")]
+		public delegate void LoginGetPhoneFunc ();
+
+		[CCode (cname = "tw_register_login_get_phone")]
+		public void login_get_phone_register (LoginGetPhoneFunc func);
+
+		[CCode (cname = "tw_login_set_phone_number")]
+		public void set_phone_number (string phone);
+
+		[CCode (cname = "tw_login_get_name", has_target = "false")]
+		public delegate void LoginGetNameFunc ();
+
+		[CCode (cname = "tw_register_login_get_name")]
+		public void login_get_name_register (LoginGetNameFunc func);
+
+		[CCode (cname = "tw_login_set_name")]
+		public void set_name (string firstname, string lastname);
+
+		[CCode (cname = "tw_login_get_otp", has_target = "false")]
+		public delegate void LoginGetOTPFunc ();
+
+		[CCode (cname = "tw_register_login_get_otp")]
+		public void login_get_otp_register (LoginGetOTPFunc func);
+
+		[CCode (cname = "tw_login_set_otp")]
+		public void set_otp (string otp);
+
+		[CCode (cname = "tw_login_set_otp_call")]
+		public void send_otp_call ();
+
+		[CCode (cname = "tw_login_destroy", has_target = "false")]
+		public delegate void LoginDestroyFunc ();
+
+		[CCode (cname = "tw_register_login_destroy")]
+		public void login_destroy_register (LoginDestroyFunc func);
+
 		public void login ();
 
 		[CCode (cname = "tgl_set_ev_base")]
@@ -33,16 +75,6 @@ namespace Telegram
 
 		[CCode (cname = "tgl_set_timer_methods")]
 		public void set_timer_methods (TelegramTimerMethods timer_methods);
-
-		[CCode (cname = "new_msg")]
-		public delegate void new_message (TelegramMessage message);
-
-		[CCode (cname = "struct tgl_update_callback", has_type_id = false)]
-		public struct callbacks
-		{
-			[CCode (delegate_target_name = "new_msg")]
-			public unowned new_message callback;
-		}
 	}
 
 	[CCode (cname = "struct tgl_message", free_function = "", has_type_id = false)]

@@ -60,7 +60,7 @@ public class GtkGramWindow : Gtk.ApplicationWindow
 		}
 		main_hbox.show_all ();
 
-		chat_manager = new GtkGramChatManager (chat_list, chat_stack);
+		chat_manager = new GtkGramChatManager (chat_list, chat_stack, this);
 		this.destroy.connect (window_destroy);
 	}
 
