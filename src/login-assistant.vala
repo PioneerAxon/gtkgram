@@ -126,6 +126,13 @@ public class GtkGramLogin : Gtk.Assistant
 			else
 				set_page_complete (otp, false);
 		});
+		Gtk.Button otp_call = new Gtk.Button.from_icon_name ("call-start-symbolic");
+		otp_call.valign = Gtk.Align.CENTER;
+		otp_call.clicked.connect (()=>{
+			otp_call.sensitive = false;
+			_t_state.send_otp_call ();
+		});
+		otp.pack_start (otp_call, false, false, 10);
 		_otp_page_id = append_page (otp);
 		set_page_complete (otp, false);
 		set_page_type (otp, Gtk.AssistantPageType.CONFIRM);
