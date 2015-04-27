@@ -3,6 +3,7 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <fcntl.h>
 
 typedef void (*tw_get_phone_cb) (struct tgl_state* TLS, char* string, void* arg);
 typedef void (*tw_get_name_cb) (struct tgl_state* TLS, char* string, void* arg);
@@ -136,6 +137,161 @@ tw_get_string (struct tgl_state* TLS, const char* prompt, int flags, void (*call
 		fprintf (stderr, "Unknown get %s %d %x\n", prompt, flags, arg);
 }
 
+tw_callback_logged_in tw_cb_logged_in_func;
+void* tw_cb_logged_in_data;
+tw_callback_started tw_cb_started_func;
+void* tw_cb_started_data;
+
+void
+tw_register_callback_logged_in (struct tgl_state* TLS, tw_callback_logged_in func, void* data)
+{
+	tw_cb_logged_in_func = func;
+	tw_cb_logged_in_data = data;
+}
+
+void
+tw_register_callback_started (struct tgl_state* TLS, tw_callback_started func, void* data)
+{
+	tw_cb_started_func = func;
+	tw_cb_started_data = data;
+}
+
+
+
+static void
+write_dc (struct tgl_dc* DC, void* extra)
+{
+	int auth_file_fd = *(int *)extra;
+	if (!DC)
+	{
+		int x = 0;
+		assert (write (auth_file_fd, &x, 4) == 4);
+		return;
+	}
+	else
+	{
+		int x = 1;
+		assert (write (auth_file_fd, &x, 4) == 4);
+	}
+
+	assert (DC->has_auth);
+
+	assert (write (auth_file_fd, &DC->port, 4) == 4);
+	int l = strlen (DC->ip);
+	assert (write (auth_file_fd, &l, 4) == 4);
+	assert (write (auth_file_fd, DC->ip, l) == l);
+	assert (write (auth_file_fd, &DC->auth_key_id, 8) == 8);
+	assert (write (auth_file_fd, DC->auth_key, 256) == 256);
+}
+
+
+static void
+export_auth_file (struct tgl_state* TLS)
+{
+	int auth_file_fd = open (AUTH_FILE_PATH, O_CREAT | O_RDWR, 0600);
+	assert (auth_file_fd >= 0);
+	int x = DC_SERIALIZED_MAGIC;
+	assert (write (auth_file_fd, &x, 4) == 4);
+	assert (write (auth_file_fd, &TLS->max_dc_num, 4) == 4);
+	assert (write (auth_file_fd, &TLS->dc_working_num, 4) == 4);
+
+	tgl_dc_iterator_ex (TLS, write_dc, &auth_file_fd);
+
+	assert (write (auth_file_fd, &TLS->our_id, 4) == 4);
+	close (auth_file_fd);
+}
+
+static void
+read_dc (struct tgl_state* TLS, int auth_file_fd, int id, unsigned ver)
+{
+	int port = 0;
+	assert (read (auth_file_fd, &port, 4) == 4);
+	int l = 0;
+	assert (read (auth_file_fd, &l, 4) == 4);
+	assert (l >= 0 && l < 100);
+	char ip[100];
+	assert (read (auth_file_fd, ip, l) == l);
+	ip[l] = 0;
+
+	long long auth_key_id;
+	static unsigned char auth_key[256];
+	assert (read (auth_file_fd, &auth_key_id, 8) == 8);
+	assert (read (auth_file_fd, auth_key, 256) == 256);
+
+	bl_do_dc_option (TLS, id, 2, "DC", l, ip, port);
+	bl_do_set_auth_key_id (TLS, id, auth_key);
+	bl_do_dc_signed (TLS, id);
+}
+
+
+static void
+empty_auth_file (struct tgl_state* TLS)
+{
+	if (TLS->test_mode)
+	{
+		bl_do_dc_option (TLS, 1, 0, "", strlen (TG_SERVER_TEST_1), TG_SERVER_TEST_1, 443);
+		bl_do_dc_option (TLS, 2, 0, "", strlen (TG_SERVER_TEST_2), TG_SERVER_TEST_2, 443);
+		bl_do_dc_option (TLS, 3, 0, "", strlen (TG_SERVER_TEST_3), TG_SERVER_TEST_3, 443);
+		bl_do_set_working_dc (TLS, 2);
+	}
+	else
+	{
+		bl_do_dc_option (TLS, 1, 0, "", strlen (TG_SERVER_1), TG_SERVER_1, 443);
+		bl_do_dc_option (TLS, 2, 0, "", strlen (TG_SERVER_2), TG_SERVER_2, 443);
+		bl_do_dc_option (TLS, 3, 0, "", strlen (TG_SERVER_3), TG_SERVER_3, 443);
+		bl_do_dc_option (TLS, 4, 0, "", strlen (TG_SERVER_4), TG_SERVER_4, 443);
+		bl_do_dc_option (TLS, 5, 0, "", strlen (TG_SERVER_5), TG_SERVER_5, 443);
+		bl_do_set_working_dc (TLS, 4);
+	}
+}
+
+static void
+import_auth_file (struct tgl_state* TLS)
+{
+	int auth_file_fd = open (AUTH_FILE_PATH, O_CREAT | O_RDWR, 0600);
+	if (auth_file_fd < 0)
+	{
+		empty_auth_file (TLS);
+		return;
+	}
+	assert (auth_file_fd >= 0);
+	unsigned x;
+	unsigned m;
+	if (read (auth_file_fd, &m, 4) < 4 || (m != DC_SERIALIZED_MAGIC))
+	{
+		close (auth_file_fd);
+		empty_auth_file (TLS);
+		return;
+	}
+	assert (read (auth_file_fd, &x, 4) == 4);
+	assert (x > 0);
+	int dc_working_num;
+	assert (read (auth_file_fd, &dc_working_num, 4) == 4);
+
+	int i;
+	for (i = 0; i <= (int)x; i++)
+	{
+		int y;
+		assert (read (auth_file_fd, &y, 4) == 4);
+		if (y) {
+			read_dc (TLS, auth_file_fd, i, m);
+		}
+	}
+	bl_do_set_working_dc (TLS, dc_working_num);
+	int our_id;
+	int l = read (auth_file_fd, &our_id, 4);
+	if (l < 4)
+	{
+		assert (!l);
+	}
+	if (our_id)
+	{
+		bl_do_set_our_id (TLS, our_id);
+	}
+	close (auth_file_fd);
+	printf ("Successfully read auth file\n");
+}
+
 void
 tw_new_msg (struct tgl_state* TLS, struct tgl_message *M)
 {
@@ -153,12 +309,18 @@ tw_logged_in (struct tgl_state* TLS)
 {
 	if (tw_login_destroy_func)
 		tw_login_destroy_func (TLS);
+
+	if (tw_cb_logged_in_func)
+		tw_cb_logged_in_func (TLS, tw_cb_logged_in_data);
+
+	export_auth_file (TLS);
 }
 
 void
 tw_started (struct tgl_state* TLS)
 {
-	printf ("In started\n");
+	if (tw_cb_started_func)
+		tw_cb_started_func (TLS, tw_cb_started_data);
 }
 
 void
@@ -245,7 +407,7 @@ tw_user_status_update (struct tgl_state* TLS, struct tgl_user* U)
 	printf ("In user_status_update\n");
 }
 
-void
+char*
 tw_create_print_name (struct tgl_state* TLS, tgl_peer_id_t id, const char* a1, const char* a2, const char* a3, const char* a4)
 {
 	printf ("In create_print_name (%s, %s, %s, %s)\n", a1, a2, a3, a4);
@@ -255,24 +417,8 @@ static void
 _tw_read_configs (struct tgl_state* TLS)
 {
 	assert (TLS);
-	if (TLS->test_mode)
-	{
-		bl_do_dc_option (TLS, 1, 0, "", strlen (TG_SERVER_TEST_1), TG_SERVER_TEST_1, 443);
-		bl_do_dc_option (TLS, 2, 0, "", strlen (TG_SERVER_TEST_2), TG_SERVER_TEST_2, 443);
-		bl_do_dc_option (TLS, 3, 0, "", strlen (TG_SERVER_TEST_3), TG_SERVER_TEST_3, 443);
-		bl_do_set_working_dc (TLS, 2);
-
-	}
-	else
-	{
-		bl_do_dc_option (TLS, 1, 0, "", strlen (TG_SERVER_1), TG_SERVER_1, 443);
-		bl_do_dc_option (TLS, 2, 0, "", strlen (TG_SERVER_2), TG_SERVER_2, 443);
-		bl_do_dc_option (TLS, 3, 0, "", strlen (TG_SERVER_3), TG_SERVER_3, 443);
-		bl_do_dc_option (TLS, 4, 0, "", strlen (TG_SERVER_4), TG_SERVER_4, 443);
-		bl_do_dc_option (TLS, 5, 0, "", strlen (TG_SERVER_5), TG_SERVER_5, 443);
-		bl_do_set_working_dc (TLS, 4);
-	}
-	bl_do_reset_authorization (TLS);
+	import_auth_file (TLS);
+//	bl_do_reset_authorization (TLS);
 
 	TLS->callback.new_msg = tw_new_msg;
 	TLS->callback.marked_read = tw_marked_read;
@@ -293,7 +439,8 @@ _tw_read_configs (struct tgl_state* TLS)
 	TLS->callback.our_id = tw_our_id;
 	TLS->callback.notification = tw_notification;
 	TLS->callback.user_status_update = tw_user_status_update;
-	TLS->callback.create_print_name = tw_create_print_name;
+//FIXME: Right now we don't have a good name creation method. Let the default method generate names for now. :)
+//	TLS->callback.create_print_name = tw_create_print_name;
 }
 
 void

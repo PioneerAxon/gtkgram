@@ -41,6 +41,10 @@ public class GtkGramChatManager
 			}
 		}
 
+		DOWNLOAD_PATH = download_directory;
+		AUTH_FILE_PATH = base_directory + "auth";
+		BASE_DIR_PATH = base_directory;
+
 		t_state = new TelegramState ();
 		t_state.set_event_base (ev_base);
 		t_state.set_rsa_key (base_directory + "server.pub");
@@ -88,8 +92,11 @@ public class GtkGramChatManager
 		t_state.login_destroy_register (()=>{
 			if (login != null && login.is_visible ())
 				login.destroy ();
-			//TODO: save current state so that we don't have to login again.
 		});
+
+		t_state.logged_in_register_cb (on_logged_in);
+		t_state.started_register_cb (on_started);
+
 		GLib.Timeout.add (50, ev_base_loop);
 		t_state.login ();
 	}
@@ -115,4 +122,14 @@ public class GtkGramChatManager
 		if (login != null && login.is_visible ())
 			login.destroy ();
 	}
+
+
+	private void on_logged_in ()
+	{
+	}
+
+	private void on_started ()
+	{
+	}
+
 }
