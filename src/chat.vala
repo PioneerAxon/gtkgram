@@ -9,7 +9,7 @@ public class GtkGramChat : Gtk.ListBoxRow
 		}
 		private set
 		{
-			chat_name_label.set_markup ("<b>" + value + "</b>");
+			chat_name_label.set_markup ("<b>" + GLib.Markup.escape_text (value) + "</b>");
 			_chat_name = value;
 		}
 	}
@@ -59,7 +59,7 @@ public class GtkGramChat : Gtk.ListBoxRow
 	private Gtk.Label chat_text_label;
 	private bool is_group;
 
-	public GtkGramChat (string chat_id, string chat_name = "Default chat", int64 chat_time = 0)
+	public GtkGramChat (string chat_id, string chat_name = "Default chat", int64 chat_time = 0, bool is_group)
 	{
 		Object ();
 		chat_box = new GtkGramChatBox ();
@@ -68,6 +68,7 @@ public class GtkGramChat : Gtk.ListBoxRow
 			_chat_image = new Gtk.Image.from_icon_name ("system-users-symbolic", Gtk.IconSize.DIALOG);
 		else
 			_chat_image = new Gtk.Image.from_icon_name ("avatar-default-symbolic", Gtk.IconSize.DIALOG);
+		this.is_group = is_group;
 		_chat_image.width_request = 50;
 		_chat_image.height_request = 50;
 		_chat_image.expand = false;

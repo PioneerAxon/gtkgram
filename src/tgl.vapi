@@ -81,10 +81,74 @@ namespace Telegram
 		public delegate void StartedFunc ();
 		[CCode (cname = "tw_register_callback_started")]
 		public void started_register_cb (StartedFunc func);
+
+
+		[CCode (cname = "tgl_do_get_dialog_callback", has_type_id = false, has_target = true)]
+		public delegate void GetDialogListFunc (int success, int size, [CCode (array_length = "false")] TelegramPeerID[] peers, [CCode (array_length = "false")] int[] message_ids, [CCode (array_length = "false")] int[] unread_counts);
+
+		[CCode (cname = "tw_do_get_dialog_list")]
+		public void get_chat_list (GetDialogListFunc func);
+
+		[CCode (cname = "tgl_peer_get")]
+		public TelegramPeer? get_peer (TelegramPeerID peer_id);
 	}
 
 	[CCode (cname = "struct tgl_message", free_function = "", has_type_id = false)]
 	public class TelegramMessage
+	{
+		public int date;
+	}
+
+
+	[CCode (cname = "int", cprefix = "TGL_PEER_", has_type_id = false)]
+	public enum TelegramPeerType
+	{
+		UNKNOWN,
+		USER,
+		CHAT,
+		GEO_CHAT,
+		ENCR_CHAT
+	}
+
+	[CCode (cname = "tgl_peer_id_t", free_function = "", has_type_id = false)]
+	[SimpleType]
+	public struct TelegramPeerID
+	{
+		TelegramPeerType type;
+		int id;
+	}
+
+	[CCode (cname = "tgl_peer_t", free_function = "", destroy_function = "", has_type_id = false)]
+	[Compact]
+	public class TelegramPeer
+	{
+		public TelegramPeerID id;
+		public int flags;
+		[CCode (cname = "last")]
+		public TelegramMessage last_message;
+		string print_name;
+		int structure_version;
+		TelegramPhoto photo;
+		[CCode (cname = "user.first_name")]
+		public string user_firstname;
+		[CCode (cname = "user.last_name")]
+		public string user_lastname;
+		[CCode (cname = "user.phone")]
+		string user_phone;
+		[CCode (cname = "user.real_first_name")]
+		string user_real_first_name;
+		[CCode (cname = "user.real_last_name")]
+		string user_real_last_name;
+		[CCode (cname = "user.username")]
+		string user_username;
+		[CCode (cname = "chat.title")]
+		public string chat_title;
+		[CCode (cname = "chat.users_num")]
+		public int chat_user_count;
+	}
+
+	[CCode (cname = "struct tgl_photo", free_function = "", has_type_id = false)]
+	public struct TelegramPhoto
 	{
 	}
 

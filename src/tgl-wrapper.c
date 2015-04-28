@@ -9,6 +9,12 @@ typedef void (*tw_get_phone_cb) (struct tgl_state* TLS, char* string, void* arg)
 typedef void (*tw_get_name_cb) (struct tgl_state* TLS, char* string, void* arg);
 typedef void (*tw_get_otp_cb) (struct tgl_state* TLS, char* string, void* arg);
 
+typedef struct
+{
+	void (*callback) ();
+	void* data;
+} callback_data;
+
 tw_login_init tw_login_init_func;
 
 tw_login_get_phone tw_login_get_phone_func;
@@ -289,7 +295,6 @@ import_auth_file (struct tgl_state* TLS)
 		bl_do_set_our_id (TLS, our_id);
 	}
 	close (auth_file_fd);
-	printf ("Successfully read auth file\n");
 }
 
 void
@@ -411,6 +416,25 @@ char*
 tw_create_print_name (struct tgl_state* TLS, tgl_peer_id_t id, const char* a1, const char* a2, const char* a3, const char* a4)
 {
 	printf ("In create_print_name (%s, %s, %s, %s)\n", a1, a2, a3, a4);
+}
+
+static void
+tw_get_dialog_list_cb (struct tgl_state* TLS, void* extra, int success, int size, tgl_peer_id_t peers[], int last_msg_id [], int unread_count[])
+{
+	callback_data *data = (callback_data*) extra;
+	data->callback (success, size, peers, last_msg_id, unread_count, data->data);
+	free (data);
+}
+
+void
+tw_do_get_dialog_list (struct tgl_state *TLS, void (*callback)(struct tgl_state *TLS, int success, int size, tgl_peer_id_t peers[], int last_msg_id[], int unread_count[], void* data), void *callback_extra)
+{
+	callback_data* data = (callback_data*) malloc (sizeof (callback_data));
+	assert (data);
+	data->callback = callback;
+	data->data = callback_extra;
+	tgl_do_get_dialog_list (TLS, tw_get_dialog_list_cb, data);
+
 }
 
 static void

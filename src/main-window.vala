@@ -29,6 +29,8 @@ public class GtkGramWindow : Gtk.ApplicationWindow
 		set_titlebar (headerbar);
 		main_hbox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 2);
 
+		Gtk.ScrolledWindow scrolled_win = new Gtk.ScrolledWindow (null, null);
+		scrolled_win.hscrollbar_policy = Gtk.PolicyType.NEVER;
 		chat_list = new GtkGramChatList ();
 		chat_list.width_request = 300;
 		chat_list.height_request = 400;
@@ -36,7 +38,8 @@ public class GtkGramWindow : Gtk.ApplicationWindow
 		var chat_list_placeholder = new Gtk.Label ("No chats available.");
 		chat_list_placeholder.show ();
 		chat_list.set_placeholder (chat_list_placeholder);
-		main_hbox.pack_start (chat_list, false, true, 0);
+		scrolled_win.add_with_viewport (chat_list);
+		main_hbox.pack_start (scrolled_win, false, true, 0);
 
 		Gtk.Separator sep = new Gtk.Separator (Gtk.Orientation.VERTICAL);
 		main_hbox.pack_start (sep, false, true, 0);
@@ -46,7 +49,7 @@ public class GtkGramWindow : Gtk.ApplicationWindow
 		chat_stack.height_request = 400;
 		chat_stack.margin_bottom = 6;
 		chat_stack.margin_end = 6;
-		chat_stack.set_transition_type (Gtk.StackTransitionType.SLIDE_UP_DOWN);
+		chat_stack.set_transition_type (Gtk.StackTransitionType.SLIDE_RIGHT);
 		main_hbox.pack_start (chat_stack, true, true, 2);
 
 		add (main_hbox);

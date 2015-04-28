@@ -101,9 +101,9 @@ public class GtkGramChatManager
 		t_state.login ();
 	}
 
-	public void add_chat (string chat_id, string chat_name = "", int chat_time = 0)
+	public void add_chat (string chat_id, string chat_name = "", int chat_time = 0, bool is_group = false)
 	{
-		GtkGramChat new_chat = new GtkGramChat (chat_id, chat_name, chat_time);
+		GtkGramChat new_chat = new GtkGramChat (chat_id, chat_name, chat_time, is_group);
 		_list.insert (new_chat, -1);
 		_stack.add_named (new_chat.chat_box, chat_id);
 		new_chat.show ();
@@ -123,6 +123,26 @@ public class GtkGramChatManager
 			login.destroy ();
 	}
 
+	private void update_list (int success, int size, TelegramPeerID[] peers, int[] message_id, int[] unread_counts)
+	{
+		for (int l = 0; l < size; l++)
+		{
+			TelegramPeer peer = t_state.get_peer (peers [l]);
+			string name = "";
+			bool is_group = false;
+			if (peers [l].type == TelegramPeerType.USER)
+			{
+				name = peer.user_firstname + " " + peer.user_lastname;
+			}
+			else if (peers [l].type == TelegramPeerType.CHAT)
+			{
+				is_group = true;
+				name = peer.chat_title;
+			}
+			add_chat ("%d".printf(peers[l].id), name, peer.last_message.date, is_group);
+		}
+	}
+
 
 	private void on_logged_in ()
 	{
@@ -130,6 +150,7 @@ public class GtkGramChatManager
 
 	private void on_started ()
 	{
+		t_state.get_chat_list (update_list);
 	}
 
 }
