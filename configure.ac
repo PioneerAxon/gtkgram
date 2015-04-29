@@ -24,6 +24,7 @@ GTK_REQUIRED=3.11.6
 PKG_CHECK_MODULES(GTKGRAM, [
     gtk+-3.0 >= $GTK_REQUIRED
     glib-2.0 >= $GLIB_REQUIRED
+    libnotify
 ])
 
 dnl ###########################################################################

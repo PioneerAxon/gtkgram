@@ -91,6 +91,10 @@ public class GtkGramChat : Gtk.ListBoxRow
 	private Gtk.Label chat_unread_count_label;
 	private bool is_group;
 
+
+	private Notify.Notification notification;
+
+
 	public GtkGramChat (string chat_id, string chat_name = "Empty chat", int64 chat_time = 0, bool is_group = false, string? last_message = "", int unread_count = 0)
 	{
 		Object ();
@@ -140,17 +144,43 @@ public class GtkGramChat : Gtk.ListBoxRow
 			this.last_message = "";
 		this.unread_count = unread_count;
 
+		notification = new Notify.Notification (chat_name, null, null);
+		try
+		{
+			notification.set_image_from_pixbuf (new Gdk.Pixbuf.from_resource_at_scale ("/org/gtkgram/logo.png", 256, 256, true));
+		}
+		catch (Error e)
+		{}
+		notification.set_timeout (5);
+		notification.set_urgency (Notify.Urgency.NORMAL);
 	}
 
 
 	public void message_receive (GtkGramMessage message)
 	{
+		bool show_notify = false;
 		if (message.message != null)
+		{
 			last_message = message.message;
+			notification.body = message.message;
+			show_notify = true;
+		}
 		if (message.is_unread)
 			unread_count++;
 		if (message.is_out)
+		{
 			unread_count = 0;
+			show_notify = false;
+		}
 		chat_time = message.origin_time;
+		if (show_notify)
+		{
+			try
+			{
+				notification.show ();
+			}
+			catch (Error e)
+			{}
+		}
 	}
 }

@@ -14,6 +14,7 @@ public class GtkGramWindow : Gtk.ApplicationWindow
 		headerbar = new Gtk.HeaderBar ();
 		headerbar.show_close_button = true;
 		headerbar.title = "GTK+ gram";
+		Notify.init ("GTK+ gram");
 
 		add_chat = new Gtk.Button.from_icon_name ("list-add-symbolic");
 		add_chat.sensitive = false;

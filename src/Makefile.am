@@ -31,7 +31,8 @@ gtkgram_SOURCES = \
 
 gtkgram_VALAFLAGS = \
 		    --target-glib 2.32\
-		    --pkg gtk+-3.0
+		    --pkg gtk+-3.0\
+		    --pkg libnotify
 
 gtkgram_LDADD = \
 		$(GTKGRAM_LIBS)\
@@ -41,7 +42,8 @@ gtkgram_LDADD = \
 	     	-ldl\
 	       	-lssl\
 		-lcrypto\
-		-levent
+		-levent\
+		-lnotify
 
 tgl/libs/libtgl.a:tgl/Makefile
 	cd $(top_srcdir)/tgl; make
