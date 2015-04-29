@@ -83,9 +83,15 @@ namespace Telegram
 		public void started_register_cb (StartedFunc func);
 
 
+
+		[CCode (cname = "tgl_do_load_photo_callback", has_type_id = false, has_target = true)]
+		public delegate void GetPhotoCallbackFunc (int success, string? filename);
+		[CCode (cname = "tw_do_load_photo")]
+		public void get_photo (TelegramPhoto photo, GetPhotoCallbackFunc func);
+
+
 		[CCode (cname = "tgl_do_get_dialog_callback", has_type_id = false, has_target = true)]
 		public delegate void GetDialogListFunc (int success, int size, [CCode (array_length = "false")] TelegramPeerID[] peers, [CCode (array_length = "false")] int[] message_ids, [CCode (array_length = "false")] int[] unread_counts);
-
 		[CCode (cname = "tw_do_get_dialog_list")]
 		public void get_chat_list (GetDialogListFunc func);
 
@@ -96,7 +102,18 @@ namespace Telegram
 	[CCode (cname = "struct tgl_message", free_function = "", has_type_id = false)]
 	public class TelegramMessage
 	{
+		public int64 id;
+		public int flags;
+		public TelegramPeerID fwd_from_id;
+		public TelegramPeerID from_id;
+		public TelegramPeerID to_id;
+		public int out;
+		public int unread;
 		public int date;
+		public int service;
+		public string? message;
+		public TelegramMedia? media;
+		public TelegramActionMessage? action;
 	}
 
 
@@ -141,14 +158,28 @@ namespace Telegram
 		string user_real_last_name;
 		[CCode (cname = "user.username")]
 		string user_username;
+		[CCode (cname = "user.photo")]
+		public TelegramPhoto user_photo;
 		[CCode (cname = "chat.title")]
 		public string chat_title;
 		[CCode (cname = "chat.users_num")]
 		public int chat_user_count;
+		[CCode (cname = "chat.photo")]
+		public TelegramPhoto chat_photo;
 	}
 
 	[CCode (cname = "struct tgl_photo", free_function = "", has_type_id = false)]
 	public struct TelegramPhoto
+	{
+	}
+
+	[CCode (cname = "struct tgl_message_media", free_function = "", has_type_id = false)]
+	public struct TelegramMedia
+	{
+	}
+
+	[CCode (cname = "struct tgl_message_action", free_function = "", has_type_id = false)]
+	public struct TelegramActionMessage
 	{
 	}
 

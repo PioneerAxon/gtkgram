@@ -14,6 +14,37 @@ public class GtkGramChat : Gtk.ListBoxRow
 		}
 	}
 
+	private string _last_message;
+	public string last_message
+	{
+		get
+		{
+			return _last_message;
+		}
+		set
+		{
+			chat_text_label.set_markup (GLib.Markup.escape_text (value));
+			_last_message = value;
+		}
+	}
+
+	private int _unread_count;
+	public int unread_count
+	{
+		get
+		{
+			return _unread_count;
+		}
+		set
+		{
+			if (value != 0)
+				chat_unread_count_label.set_text ("%d".printf (value));
+			else
+				chat_unread_count_label.set_text (" ");
+			_unread_count = value;
+		}
+	}
+
 	private GLib.DateTime _chat_time;
 	public GLib.DateTime chat_time
 	{
@@ -25,7 +56,7 @@ public class GtkGramChat : Gtk.ListBoxRow
 		{
 			var now = new GLib.DateTime.now_local ();
 			if (now.difference (value) < GLib.TimeSpan.DAY)
-				chat_time_label.set_label (value.format ("%k:%M %p"));
+				chat_time_label.set_label (value.format ("%l:%M %p"));
 			else
 				chat_time_label.set_label (value.format ("%d/%m/%Y"));
 			_chat_time = value;
@@ -52,14 +83,15 @@ public class GtkGramChat : Gtk.ListBoxRow
 	}
 
 	public GtkGramChatBox chat_box { get; private set; }
-	
+
 	private Gtk.Image _chat_image;
 	private Gtk.Label chat_name_label;
 	private Gtk.Label chat_time_label;
 	private Gtk.Label chat_text_label;
+	private Gtk.Label chat_unread_count_label;
 	private bool is_group;
 
-	public GtkGramChat (string chat_id, string chat_name = "Default chat", int64 chat_time = 0, bool is_group)
+	public GtkGramChat (string chat_id, string chat_name = "Empty chat", int64 chat_time = 0, bool is_group = false, string? last_message = "", int unread_count = 0)
 	{
 		Object ();
 		chat_box = new GtkGramChatBox ();
@@ -68,14 +100,15 @@ public class GtkGramChat : Gtk.ListBoxRow
 			_chat_image = new Gtk.Image.from_icon_name ("system-users-symbolic", Gtk.IconSize.DIALOG);
 		else
 			_chat_image = new Gtk.Image.from_icon_name ("avatar-default-symbolic", Gtk.IconSize.DIALOG);
-		this.is_group = is_group;
 		_chat_image.width_request = 50;
 		_chat_image.height_request = 50;
 		_chat_image.expand = false;
 		chat_name_label = new Gtk.Label ("");
+		chat_name_label.ellipsize = Pango.EllipsizeMode.END;
 		chat_time_label = new Gtk.Label ("");
-		//FIXME: Add last chat message content here
 		chat_text_label = new Gtk.Label ("");
+		chat_text_label.ellipsize = Pango.EllipsizeMode.END;
+		chat_unread_count_label = new Gtk.Label ("");
 
 		var hbox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
 		hbox.pack_start (_chat_image, false, true, 3);
@@ -84,7 +117,10 @@ public class GtkGramChat : Gtk.ListBoxRow
 		name_hbox.pack_start (chat_name_label, false, false, 2);
 		name_hbox.pack_end (chat_time_label, false, false, 2);
 		vbox.pack_start (name_hbox, true, true, 2);
-		vbox.pack_start (chat_text_label, true, true, 2);
+		var message_hbox = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
+		message_hbox.pack_start (chat_text_label, false, true, 2);
+		message_hbox.pack_end (chat_unread_count_label, false, true, 2);
+		vbox.pack_end (message_hbox, true, true, 2);
 		hbox.pack_start (vbox, true, true, 2);
 
 		add (hbox);
@@ -97,5 +133,12 @@ public class GtkGramChat : Gtk.ListBoxRow
 			this.chat_time = new GLib.DateTime.from_unix_local (chat_time);
 		else
 			this.chat_time = new GLib.DateTime.now_local ();
+		this.is_group = is_group;
+		if (last_message != null)
+			this.last_message = last_message;
+		else
+			this.last_message = "";
+		this.unread_count = unread_count;
+
 	}
 }

@@ -438,6 +438,24 @@ tw_do_get_dialog_list (struct tgl_state *TLS, void (*callback)(struct tgl_state 
 }
 
 static void
+tw_load_photo_cb (struct tgl_state* TLS, void* callback_extra, int success, char* filename)
+{
+	callback_data *data = (callback_data*) callback_extra;
+	data->callback (success, filename, data->data);
+	free (data);
+}
+
+void
+tw_do_load_photo (struct tgl_state* TLS, struct tgl_photo* photo, void (*callback) (struct tgl_state* state, void* callback_extra, int success, char* filename), void* callback_extra)
+{
+	callback_data* data = (callback_data*) malloc (sizeof (callback_data));
+	assert (data);
+	data->callback = callback;
+	data->data = callback_extra;
+	tgl_do_load_photo (TLS, photo, tw_load_photo_cb, data);
+}
+
+static void
 _tw_read_configs (struct tgl_state* TLS)
 {
 	assert (TLS);

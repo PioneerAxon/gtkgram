@@ -39,8 +39,4 @@ typedef void (*tw_callback_started) (struct tgl_state* TLS, void* data);
 void tw_register_callback_logged_in (struct tgl_state* TLS, tw_callback_logged_in func, void* data);
 void tw_register_callback_started (struct tgl_state* TLS, tw_callback_started func, void* data);
 
-
-
-typedef void (*tgl_do_get_dialog_list_callback) (struct tgl_state *TLS, void *callback_extra, int success, int size, tgl_peer_id_t peers[], int last_msg_id[], int unread_count[]);
-
 #endif
