@@ -55,7 +55,7 @@ public class GtkGramWindow : Gtk.ApplicationWindow
 		add (main_hbox);
 		try
 		{
-			set_icon (new Gdk.Pixbuf.from_resource_at_scale ("/org/gtkgram/logo.png", 24, 24, true));
+			set_icon (new Gdk.Pixbuf.from_resource_at_scale ("/org/gtkgram/logo.png", 256, 256, true));
 		}
 		catch (Error e)
 		{

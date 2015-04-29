@@ -154,7 +154,7 @@ public class GtkGramChatManager
 	private void on_message_receive (TelegramMessage message)
 	{
 		int chat_id;
-		if (message.to_id.type == TelegramPeerType.USER)
+		if (message.to_id.type == TelegramPeerType.USER && message.out == 0)
 		{
 			chat_id = message.from_id.id;
 		}

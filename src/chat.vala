@@ -149,6 +149,8 @@ public class GtkGramChat : Gtk.ListBoxRow
 			last_message = message.message;
 		if (message.is_unread)
 			unread_count++;
+		if (message.is_out)
+			unread_count = 0;
 		chat_time = message.origin_time;
 	}
 }
