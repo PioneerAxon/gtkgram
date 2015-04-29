@@ -12,6 +12,8 @@ public class GtkGramChatManager
 	private static string base_directory;
 	private static string download_directory;
 
+	private static GLib.HashTable<int64?, GtkGramChat> chat_table;
+
 	public GtkGramChatManager (owned GtkGramChatList list, owned Gtk.Stack stack, owned Gtk.ApplicationWindow main_window)
 	{
 		_list = list;
@@ -96,16 +98,21 @@ public class GtkGramChatManager
 
 		t_state.logged_in_register_cb (on_logged_in);
 		t_state.started_register_cb (on_started);
+		t_state.message_receive_register_cb (on_message_receive);
 
 		GLib.Timeout.add (50, ev_base_loop);
+		chat_table = new GLib.HashTable<int64?, GtkGramChat> (int64_hash, int64_equal);
 		t_state.login ();
 	}
 
-	public void add_chat (string chat_id, string chat_name = "", int chat_time = 0, bool is_group = false, string? last_message = "", int unread_count = 0)
+	public void add_chat (int chat_id, string chat_name = "", int chat_time = 0, bool is_group = false, string? last_message = "", int unread_count = 0)
 	{
-		GtkGramChat new_chat = new GtkGramChat (chat_id, chat_name, chat_time, is_group, last_message, unread_count);
+		if (chat_table.contains (chat_id))
+			return;
+		GtkGramChat new_chat = new GtkGramChat ("%d".printf (chat_id), chat_name, chat_time, is_group, last_message, unread_count);
+		chat_table.insert (chat_id, new_chat);
 		_list.insert (new_chat, -1);
-		_stack.add_named (new_chat.chat_box, chat_id);
+		_stack.add_named (new_chat.chat_box, "%d".printf(chat_id));
 		new_chat.show ();
 		new_chat.chat_box.show ();
 		_list.invalidate_sort ();
@@ -139,10 +146,29 @@ public class GtkGramChatManager
 				is_group = true;
 				name = peer.chat_title;
 			}
-			add_chat ("%d".printf(peers[l].id), name, peer.last_message.date, is_group, peer.last_message.message, unread_counts [l]);
+			add_chat (peers[l].id, name, peer.last_message.date, is_group, peer.last_message.message, unread_counts [l]);
 		}
 	}
 
+
+	private void on_message_receive (TelegramMessage message)
+	{
+		int chat_id;
+		if (message.to_id.type == TelegramPeerType.USER)
+		{
+			chat_id = message.from_id.id;
+		}
+		else
+		{
+			chat_id = message.to_id.id;
+		}
+		if (chat_table.contains (chat_id))
+		{
+			GtkGramChat chat = chat_table.lookup (chat_id);
+			chat.message_receive (GtkGramConverter.to_GtkGramMessage (message));
+			_list.invalidate_sort ();
+		}
+	}
 
 	private void on_logged_in ()
 	{

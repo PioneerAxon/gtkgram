@@ -141,4 +141,14 @@ public class GtkGramChat : Gtk.ListBoxRow
 		this.unread_count = unread_count;
 
 	}
+
+
+	public void message_receive (GtkGramMessage message)
+	{
+		if (message.message != null)
+			last_message = message.message;
+		if (message.is_unread)
+			unread_count++;
+		chat_time = message.origin_time;
+	}
 }

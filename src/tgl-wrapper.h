@@ -35,8 +35,10 @@ void tw_register_login_destroy (struct tgl_state* TLS, tw_login_destroy login_de
 
 typedef void (*tw_callback_logged_in) (struct tgl_state* TLS, void* data);
 typedef void (*tw_callback_started) (struct tgl_state* TLS, void* data);
+typedef void (*tw_callback_msg_receive) (struct tgl_message* M, void* data);
 
 void tw_register_callback_logged_in (struct tgl_state* TLS, tw_callback_logged_in func, void* data);
 void tw_register_callback_started (struct tgl_state* TLS, tw_callback_started func, void* data);
+void tw_register_callback_msg_receive (struct tgl_state* TLS, tw_callback_msg_receive func, void* data);
 
 #endif

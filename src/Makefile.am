@@ -24,6 +24,8 @@ gtkgram_SOURCES = \
 	  	  main-window.vala\
 		  ui_strings.vala\
 		  login-assistant.vala\
+		  message.vala\
+		  class-converter.vala\
 		  tgl-wrapper.c\
 		  $(BUILT_SOURCES)
 

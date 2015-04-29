@@ -37,26 +37,26 @@ namespace Telegram
 
 
 
-		[CCode (cname = "tw_login_init", has_target = "false")]
+		[CCode (cname = "tw_login_init", has_target = false)]
 		public delegate void LoginAssistantInitFunc ();
 		[CCode (cname = "tw_register_login_init")]
 		public void login_assistant_init_register (LoginAssistantInitFunc func);
 
-		[CCode (cname = "tw_login_get_phone", has_target = "false")]
+		[CCode (cname = "tw_login_get_phone", has_target = false)]
 		public delegate void LoginGetPhoneFunc ();
 		[CCode (cname = "tw_register_login_get_phone")]
 		public void login_get_phone_register (LoginGetPhoneFunc func);
 		[CCode (cname = "tw_login_set_phone_number")]
 		public void set_phone_number (string phone);
 
-		[CCode (cname = "tw_login_get_name", has_target = "false")]
+		[CCode (cname = "tw_login_get_name", has_target = false)]
 		public delegate void LoginGetNameFunc ();
 		[CCode (cname = "tw_register_login_get_name")]
 		public void login_get_name_register (LoginGetNameFunc func);
 		[CCode (cname = "tw_login_set_name")]
 		public void set_name (string firstname, string lastname);
 
-		[CCode (cname = "tw_login_get_otp", has_target = "false")]
+		[CCode (cname = "tw_login_get_otp", has_target = false)]
 		public delegate void LoginGetOTPFunc ();
 		[CCode (cname = "tw_register_login_get_otp")]
 		public void login_get_otp_register (LoginGetOTPFunc func);
@@ -65,7 +65,7 @@ namespace Telegram
 		[CCode (cname = "tw_login_set_otp_call")]
 		public void send_otp_call ();
 
-		[CCode (cname = "tw_login_destroy", has_target = "false")]
+		[CCode (cname = "tw_login_destroy", has_target = false)]
 		public delegate void LoginDestroyFunc ();
 		[CCode (cname = "tw_register_login_destroy")]
 		public void login_destroy_register (LoginDestroyFunc func);
@@ -83,6 +83,12 @@ namespace Telegram
 		public void started_register_cb (StartedFunc func);
 
 
+		[CCode (cname = "tw_callback_msg_receive")]
+		public delegate void MessageReceiveFunc (TelegramMessage message);
+		[CCode (cname = "tw_register_callback_msg_receive")]
+		public void message_receive_register_cb (MessageReceiveFunc func);
+
+
 
 		[CCode (cname = "tgl_do_load_photo_callback", has_type_id = false, has_target = true)]
 		public delegate void GetPhotoCallbackFunc (int success, string? filename);
@@ -91,7 +97,7 @@ namespace Telegram
 
 
 		[CCode (cname = "tgl_do_get_dialog_callback", has_type_id = false, has_target = true)]
-		public delegate void GetDialogListFunc (int success, int size, [CCode (array_length = "false")] TelegramPeerID[] peers, [CCode (array_length = "false")] int[] message_ids, [CCode (array_length = "false")] int[] unread_counts);
+		public delegate void GetDialogListFunc (int success, int size, [CCode (array_length = false)] TelegramPeerID[] peers, [CCode (array_length = false)] int[] message_ids, [CCode (array_length = false)] int[] unread_counts);
 		[CCode (cname = "tw_do_get_dialog_list")]
 		public void get_chat_list (GetDialogListFunc func);
 

@@ -147,6 +147,8 @@ tw_callback_logged_in tw_cb_logged_in_func;
 void* tw_cb_logged_in_data;
 tw_callback_started tw_cb_started_func;
 void* tw_cb_started_data;
+tw_callback_msg_receive tw_cb_msg_receive_func;
+void* tw_cb_msg_receive_data;
 
 void
 tw_register_callback_logged_in (struct tgl_state* TLS, tw_callback_logged_in func, void* data)
@@ -160,6 +162,13 @@ tw_register_callback_started (struct tgl_state* TLS, tw_callback_started func, v
 {
 	tw_cb_started_func = func;
 	tw_cb_started_data = data;
+}
+
+void
+tw_register_callback_msg_receive (struct tgl_state* TLS, tw_callback_msg_receive func, void* data)
+{
+	tw_cb_msg_receive_func = func;
+	tw_cb_msg_receive_data = data;
 }
 
 
@@ -391,7 +400,8 @@ tw_secret_chat_update (struct tgl_state* TLS, struct tgl_secret_chat* C, unsigne
 void
 tw_msg_receive (struct tgl_state* TLS, struct tgl_message* M)
 {
-	printf ("In msg_receive\n");
+	if (tw_cb_msg_receive_func)
+		tw_cb_msg_receive_func (M, tw_cb_msg_receive_data);
 }
 
 void
