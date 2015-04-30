@@ -107,7 +107,7 @@ public class GtkGramChatManager
 		t_state.login ();
 	}
 
-	public void add_chat (int chat_id, string chat_name = "", int chat_time = 0, bool is_group = false, string? last_message = "", int unread_count = 0)
+	public void add_chat (int chat_id, string chat_name = "", int chat_time = 0, bool is_group = false, GtkGramMessage? last_message = null, int unread_count = 0)
 	{
 		if (chat_table.contains (chat_id))
 			return;
@@ -150,7 +150,7 @@ public class GtkGramChatManager
 				name = peer.chat_title;
 				t_state.get_chat_info (peers [l], on_chat_info_update);
 			}
-			add_chat (peers[l].id, name, peer.last_message.date, is_group, peer.last_message.message, unread_counts [l]);
+			add_chat (peers[l].id, name, peer.last_message.date, is_group, GtkGramConverter.to_GtkGramMessage (peer.last_message), unread_counts [l]);
 		}
 	}
 

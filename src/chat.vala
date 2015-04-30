@@ -97,7 +97,7 @@ public class GtkGramChat : Gtk.ListBoxRow
 	private Notify.Notification notification;
 
 
-	public GtkGramChat (string chat_id, string chat_name = "Empty chat", int64 chat_time = 0, bool is_group = false, string? last_message = "", int unread_count = 0)
+	public GtkGramChat (string chat_id, string chat_name = "Empty chat", int64 chat_time = 0, bool is_group = false, GtkGramMessage? last_message, int unread_count = 0)
 	{
 		Object ();
 		chat_box = new GtkGramChatBox ();
@@ -141,9 +141,7 @@ public class GtkGramChat : Gtk.ListBoxRow
 			this.chat_time = new GLib.DateTime.now_local ();
 		this.is_group = is_group;
 		if (last_message != null)
-			this.last_message = last_message;
-		else
-			this.last_message = "";
+			this.last_message = last_message.message;
 		this.unread_count = unread_count;
 
 		notification = new Notify.Notification (chat_name, null, null);

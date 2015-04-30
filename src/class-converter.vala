@@ -22,7 +22,15 @@ public class GtkGramConverter
 		message.is_unread = (m.unread != 0);
 		message.origin_time = new GLib.DateTime.from_unix_local (m.date);
 		message.is_service = (m.service != 0);
-		message.message = m.message;
+		if (message.is_service)
+		{
+			//TODO: Convert service messages to string here.
+			message.message = "";
+		}
+		else
+		{
+			message.message = m.message;
+		}
 		return message;
 	}
 }
