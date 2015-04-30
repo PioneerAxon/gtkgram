@@ -107,7 +107,7 @@ public class GtkGramChatManager
 		t_state.login ();
 	}
 
-	public void add_chat (int chat_id, string chat_name = "", int chat_time = 0, bool is_group = false, GtkGramMessage? last_message = null, int unread_count = 0)
+	public void add_chat (int chat_id, string chat_name, int chat_time, bool is_group, GtkGramMessage last_message, int unread_count)
 	{
 		if (chat_table.contains (chat_id))
 			return;
