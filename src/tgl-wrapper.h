@@ -36,9 +36,16 @@ void tw_register_login_destroy (struct tgl_state* TLS, tw_login_destroy login_de
 typedef void (*tw_callback_logged_in) (struct tgl_state* TLS, void* data);
 typedef void (*tw_callback_started) (struct tgl_state* TLS, void* data);
 typedef void (*tw_callback_msg_receive) (struct tgl_message* M, void* data);
+typedef void (*tw_callback_chat_update) (struct tgl_chat* C, unsigned flags, void* data);
+typedef void (*tw_callback_user_update) (struct tgl_user* U, unsigned flags, void* data);
+typedef void (*tw_callback_get_chat_info) (int success, struct tgl_chat* C, void* data);
+typedef void (*tw_callback_get_user_info) (int success, struct tgl_user* U, void* data);
+typedef void (*tw_callback_load_photo) (int success, char* filename, long long peer_id);
 
 void tw_register_callback_logged_in (struct tgl_state* TLS, tw_callback_logged_in func, void* data);
 void tw_register_callback_started (struct tgl_state* TLS, tw_callback_started func, void* data);
 void tw_register_callback_msg_receive (struct tgl_state* TLS, tw_callback_msg_receive func, void* data);
+void tw_register_callback_chat_update (struct tgl_state* TLS, tw_callback_chat_update func, void* data);
+void tw_register_callback_user_update (struct tgl_state* TLS, tw_callback_user_update func, void* data);
 
 #endif

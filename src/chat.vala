@@ -71,6 +71,8 @@ public class GtkGramChat : Gtk.ListBoxRow
 		{
 			try
 			{
+				if (value == null || value == "")
+					return;
 				Gdk.Pixbuf image = new Gdk.Pixbuf.from_file_at_size (value, 50, 50);
 				_chat_image.clear ();
 				_chat_image.set_from_pixbuf (image);

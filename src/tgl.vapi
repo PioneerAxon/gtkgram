@@ -88,12 +88,33 @@ namespace Telegram
 		[CCode (cname = "tw_register_callback_msg_receive")]
 		public void message_receive_register_cb (MessageReceiveFunc func);
 
+		[CCode (cname = "tw_callback_user_update")]
+		public delegate void UserUpdateFunc (TelegramUser user, UpdateFlags flags);
+		[CCode (cname = "tw_register_callback_user_update")]
+		public void user_update_register_cb (UserUpdateFunc func);
+
+		[CCode (cname = "tw_callback_chat_update")]
+		public delegate void ChatUpdateFunc (TelegramChat chat, UpdateFlags flags);
+		[CCode (cname = "tw_register_callback_chat_update")]
+		public void chat_update_register_cb (ChatUpdateFunc func);
 
 
-		[CCode (cname = "tgl_do_load_photo_callback", has_type_id = false, has_target = true)]
-		public delegate void GetPhotoCallbackFunc (int success, string? filename);
+
+		[CCode (cname = "tw_callback_load_photo", has_type_id = true, has_target = true)]
+		public delegate void GetPhotoCallbackFunc (int success, string? filename, int64 peer_id);
 		[CCode (cname = "tw_do_load_photo")]
-		public void get_photo (TelegramPhoto photo, GetPhotoCallbackFunc func);
+		public void get_photo (TelegramPhoto photo, GetPhotoCallbackFunc func, int64 peer_id);
+
+		[CCode (cname = "tw_callback_get_chat_info")]
+		public delegate void GetChatInfoCallbackFunc (int success, TelegramChat chat);
+		[CCode (cname = "tw_do_get_chat_info")]
+		public void get_chat_info (TelegramPeerID id, GetChatInfoCallbackFunc func);
+
+		[CCode (cname = "tw_callback_get_user_info")]
+		public delegate void GetUserInfoCallbackFunc (int success, TelegramUser user);
+		[CCode (cname = "tw_do_get_user_info")]
+		public void get_user_info (TelegramPeerID id, GetUserInfoCallbackFunc func);
+
 
 
 		[CCode (cname = "tgl_do_get_dialog_callback", has_type_id = false, has_target = true)]
@@ -131,6 +152,28 @@ namespace Telegram
 		CHAT,
 		GEO_CHAT,
 		ENCR_CHAT
+	}
+
+	[CCode (cname = "int", cprefix = "TGL_UPDATE_", has_type_id = false)]
+	[Flags]
+	public enum UpdateFlags
+	{
+		CREATED,
+		DELETED,
+		PHONE,
+		CONTACT,
+		PHOTO,
+		BLOCKED,
+		REAL_NAME,
+		NAME,
+		REQUESTED,
+		WORKING,
+		FLAGS,
+		TITLE,
+		ADMIN,
+		MEMBERS,
+		ACCESS_HASH,
+		USERNAME
 	}
 
 	[CCode (cname = "tgl_peer_id_t", free_function = "", has_type_id = false)]
@@ -172,6 +215,22 @@ namespace Telegram
 		public int chat_user_count;
 		[CCode (cname = "chat.photo")]
 		public TelegramPhoto chat_photo;
+	}
+
+	[CCode (cname = "struct tgl_chat", free_function = "", has_type_id = false)]
+	public struct TelegramChat
+	{
+		[CCode (cname = "id.id")]
+		int64 id;
+		TelegramPhoto photo;
+	}
+
+	[CCode (cname = "struct tgl_user", free_function = "", has_type_id = false)]
+	public struct TelegramUser
+	{
+		[CCode (cname = "id.id")]
+		int64 id;
+		TelegramPhoto photo;
 	}
 
 	[CCode (cname = "struct tgl_photo", free_function = "", has_type_id = false)]

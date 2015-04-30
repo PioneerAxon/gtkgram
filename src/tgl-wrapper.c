@@ -13,6 +13,7 @@ typedef struct
 {
 	void (*callback) ();
 	void* data;
+	void* extra;
 } callback_data;
 
 tw_login_init tw_login_init_func;
@@ -149,6 +150,10 @@ tw_callback_started tw_cb_started_func;
 void* tw_cb_started_data;
 tw_callback_msg_receive tw_cb_msg_receive_func;
 void* tw_cb_msg_receive_data;
+tw_callback_chat_update tw_cb_chat_update_func;
+void* tw_cb_chat_update_data;
+tw_callback_user_update tw_cb_user_update_func;
+void* tw_cb_user_update_data;
 
 void
 tw_register_callback_logged_in (struct tgl_state* TLS, tw_callback_logged_in func, void* data)
@@ -169,6 +174,20 @@ tw_register_callback_msg_receive (struct tgl_state* TLS, tw_callback_msg_receive
 {
 	tw_cb_msg_receive_func = func;
 	tw_cb_msg_receive_data = data;
+}
+
+void
+tw_register_callback_chat_update (struct tgl_state* TLS, tw_callback_chat_update func, void* data)
+{
+	tw_cb_chat_update_func = func;
+	tw_cb_chat_update_data = data;
+}
+
+void
+tw_register_callback_user_update (struct tgl_state* TLS, tw_callback_user_update func, void* data)
+{
+	tw_cb_user_update_func = func;
+	tw_cb_user_update_data = data;
 }
 
 
@@ -382,13 +401,16 @@ tw_new_authorization (struct tgl_state* TLS, const char* device, const char* loc
 void
 tw_chat_update (struct tgl_state* TLS, struct tgl_chat* C, unsigned flags)
 {
-	printf ("In chat_update %d\n", flags);
+	if (tw_cb_chat_update_func)
+		tw_cb_chat_update_func (C, flags, tw_cb_chat_update_data);
 }
 
 void
 tw_user_update (struct tgl_state* TLS, struct tgl_user * U, unsigned flags)
 {
-	printf ("In user_update %d\n", flags);
+
+	if (tw_cb_user_update_func)
+		tw_cb_user_update_func (U, flags, tw_cb_user_update_data);
 }
 
 void
@@ -448,20 +470,57 @@ tw_do_get_dialog_list (struct tgl_state *TLS, void (*callback)(struct tgl_state 
 }
 
 static void
-tw_load_photo_cb (struct tgl_state* TLS, void* callback_extra, int success, char* filename)
+tw_get_user_info_cb (struct tgl_state* TLS, void* extra, int success, struct tgl_user* U)
 {
-	callback_data *data = (callback_data*) callback_extra;
-	data->callback (success, filename, data->data);
+	callback_data* data = (callback_data*) extra;
+	data->callback (success, U, data->data);
 	free (data);
 }
 
 void
-tw_do_load_photo (struct tgl_state* TLS, struct tgl_photo* photo, void (*callback) (struct tgl_state* state, void* callback_extra, int success, char* filename), void* callback_extra)
+tw_do_get_user_info (struct tgl_state* TLS, tgl_peer_id_t id, tw_callback_get_user_info callback, void* callback_extra)
 {
 	callback_data* data = (callback_data*) malloc (sizeof (callback_data));
 	assert (data);
 	data->callback = callback;
 	data->data = callback_extra;
+	tgl_do_get_user_info (TLS, id, 0, tw_get_user_info_cb, data);
+}
+
+static void
+tw_get_chat_info_cb (struct tgl_state* TLS, void* extra, int success, struct tgl_chat* C)
+{
+	callback_data* data = (callback_data*) extra;
+	data->callback (success, C, data->data);
+	free (data);
+}
+
+void
+tw_do_get_chat_info (struct tgl_state* TLS, tgl_peer_id_t id, tw_callback_get_chat_info callback, void* callback_extra)
+{
+	callback_data* data = (callback_data*) malloc (sizeof (callback_data));
+	assert (data);
+	data->callback = callback;
+	data->data = callback_extra;
+	tgl_do_get_chat_info (TLS, id, 0, tw_get_chat_info_cb, data);
+}
+
+static void
+tw_load_photo_cb (struct tgl_state* TLS, void* callback_extra, int success, char* filename)
+{
+	callback_data *data = (callback_data*) callback_extra;
+	data->callback (success, filename, data->data, (long long)data->extra);
+	free (data);
+}
+
+void
+tw_do_load_photo (struct tgl_state* TLS, struct tgl_photo* photo, tw_callback_load_photo callback, long long peer_id, void* callback_extra)
+{
+	callback_data* data = (callback_data*) malloc (sizeof (callback_data));
+	assert (data);
+	data->callback = callback;
+	data->data = callback_extra;
+	data->extra = peer_id;
 	tgl_do_load_photo (TLS, photo, tw_load_photo_cb, data);
 }
 

@@ -99,6 +99,8 @@ public class GtkGramChatManager
 		t_state.logged_in_register_cb (on_logged_in);
 		t_state.started_register_cb (on_started);
 		t_state.message_receive_register_cb (on_message_receive);
+		t_state.user_update_register_cb (on_user_update);
+		t_state.chat_update_register_cb (on_chat_update);
 
 		GLib.Timeout.add (50, ev_base_loop);
 		chat_table = new GLib.HashTable<int64?, GtkGramChat> (int64_hash, int64_equal);
@@ -140,16 +142,54 @@ public class GtkGramChatManager
 			if (peers [l].type == TelegramPeerType.USER)
 			{
 				name = peer.user_firstname + " " + peer.user_lastname;
+				t_state.get_user_info (peers [l], on_user_info_update);
 			}
 			else if (peers [l].type == TelegramPeerType.CHAT)
 			{
 				is_group = true;
 				name = peer.chat_title;
+				t_state.get_chat_info (peers [l], on_chat_info_update);
 			}
 			add_chat (peers[l].id, name, peer.last_message.date, is_group, peer.last_message.message, unread_counts [l]);
 		}
 	}
 
+
+	private void on_chat_update (TelegramChat chat, UpdateFlags flags)
+	{
+		if ((flags & UpdateFlags.PHOTO) != 0)
+		{
+			t_state.get_photo (chat.photo, (success, filename, id) => {
+				if (chat_table.contains (id))
+				{
+					GtkGramChat _chat = chat_table.lookup (id);
+					_chat.chat_image = filename;
+				}
+			}, chat.id);
+		}
+	}
+
+	private void on_user_update (TelegramUser user, UpdateFlags flags)
+	{
+		if ((flags & UpdateFlags.PHOTO) != 0)
+		{
+			t_state.get_photo (user.photo, (success, filename, id) => {
+				if (chat_table.contains (id))
+				{
+					GtkGramChat _chat = chat_table.lookup (id);
+					_chat.chat_image = filename;
+				}
+			}, user.id);
+		}
+	}
+
+	private void on_chat_info_update (int success, TelegramChat chat)
+	{
+	}
+
+	private void on_user_info_update (int success, TelegramUser user)
+	{
+	}
 
 	private void on_message_receive (TelegramMessage message)
 	{
