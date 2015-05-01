@@ -19,6 +19,7 @@ gtkgram_SOURCES = \
 		  chat-box.vala\
 		  chat-list.vala\
 		  chat-manager.vala\
+		  chat-message.vala\
 		  chat.vala\
 		  gtkgram.vala\
 	  	  main-window.vala\

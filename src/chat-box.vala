@@ -20,15 +20,36 @@ public class GtkGramChatBox : Gtk.Box
 	private Gtk.Button upload_image;
 	private Gtk.Button emoticons;
 	private Gtk.Button send_text;
+	private Gtk.ListBox message_list;
 
-	public GtkGramChatBox ()
+	private string chat_id;
+
+	public GtkGramChatBox (string chat_id)
 	{
 		Object (orientation: Gtk.Orientation.VERTICAL, spacing: 2);
+		this.chat_id = chat_id;
+
+		message_list = new Gtk.ListBox ();
+		var scrolled_window = new Gtk.ScrolledWindow (null, null);
+		scrolled_window.hscrollbar_policy = Gtk.PolicyType.NEVER;
+		scrolled_window.add_with_viewport (message_list);
+		scrolled_window.show_all ();
+
 		spinner = new Gtk.Spinner ();
-		pack_start (spinner, true, true, 0);
+		var loading_row = new Gtk.ListBoxRow ();
+		loading_row.show ();
+		loading_row.activatable = false;
+		loading_row.selectable = false;
+		loading_row.add (spinner);
+		message_list.insert (loading_row, 0);
+		pack_start (scrolled_window, true, true, 0);
 
 		chat_input_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 2);
+		var chat_input_scroll = new Gtk.ScrolledWindow (null, null);
+		chat_input_scroll.hscrollbar_policy = Gtk.PolicyType.NEVER;
 		chat_input = new Gtk.TextView ();
+		chat_input.set_wrap_mode (Gtk.WrapMode.WORD_CHAR);
+		chat_input_scroll.add_with_viewport (chat_input);
 
 		upload_file = new Gtk.Button.from_icon_name ("document-send-symbolic");
 		upload_image = new Gtk.Button.from_icon_name ("mail-send-symbolic");
@@ -42,11 +63,13 @@ public class GtkGramChatBox : Gtk.Box
 		send_text = new Gtk.Button.from_icon_name ("mail-replied-symbolic");
 
 		chat_input_box.pack_start (upload_box, false, true, 2);
-		chat_input_box.pack_start (chat_input, true, true, 2);
+		chat_input_box.pack_start (chat_input_scroll, true, true, 2);
 		chat_input_box.pack_start (send_text, false, true, 2);
 		chat_input_box.show_all ();
 
 		pack_start (chat_input_box, false, true, 2);
+		message_list.set_sort_func (message_list_sort_func);
+		message_list.selection_mode = Gtk.SelectionMode.NONE;
 		chat_ready = false;
 	}
 
@@ -70,5 +93,22 @@ public class GtkGramChatBox : Gtk.Box
 		upload_image.sensitive = true;
 		emoticons.sensitive = true;
 		send_text.sensitive = true;
+	}
+
+
+	public void insert_message (GtkGramMessage message)
+	{
+		var chat_message = new GtkGramChatMessage (message);
+		message_list.insert (chat_message, -1);
+		message_list.invalidate_sort ();
+	}
+
+	private int message_list_sort_func (Gtk.ListBoxRow r1, Gtk.ListBoxRow r2)
+	{
+		if (!r1.selectable)
+			return -1;
+		if (!r2.selectable)
+			return 1;
+		return (r1 as GtkGramChatMessage).time.compare ((r2 as GtkGramChatMessage).time);
 	}
 }

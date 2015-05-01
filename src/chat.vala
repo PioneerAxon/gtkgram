@@ -100,7 +100,7 @@ public class GtkGramChat : Gtk.ListBoxRow
 	public GtkGramChat (string chat_id, string chat_name, int64 chat_time, bool is_group, GtkGramMessage last_message, int unread_count)
 	{
 		Object ();
-		chat_box = new GtkGramChatBox ();
+		chat_box = new GtkGramChatBox (chat_id);
 
 		if (is_group)
 			_chat_image = new Gtk.Image.from_icon_name ("system-users-symbolic", Gtk.IconSize.DIALOG);
@@ -143,6 +143,7 @@ public class GtkGramChat : Gtk.ListBoxRow
 		if (last_message != null)
 			this.last_message = last_message.message;
 		this.unread_count = unread_count;
+		chat_box.insert_message (last_message);
 
 		notification = new Notify.Notification (chat_name, null, null);
 		try
