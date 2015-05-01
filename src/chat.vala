@@ -183,5 +183,6 @@ public class GtkGramChat : Gtk.ListBoxRow
 			catch (Error e)
 			{}
 		}
+		chat_box.insert_message (message);
 	}
 }
