@@ -14,7 +14,17 @@ public class GtkGramChatMessage : Gtk.ListBoxRow
 		this.message = message.message;
 		this.time = message.origin_time;
 
-		this.from_name = new Gtk.Label ("%lld".printf (message.from_id));
+		string from_user_name;
+		GtkGramUser _user = GtkGramChatManager.get_user (message.from_id);
+		if (_user == null || (_user.firstname == null && _user.lastname == null))
+			from_user_name = "User#%lld".printf (message.from_id);
+		else
+		{
+			from_user_name = _user.firstname;
+			if (_user.lastname != null && _user.lastname != "")
+				from_user_name = from_user_name + " " + _user.lastname;
+		}
+		this.from_name = new Gtk.Label (from_user_name);
 		this.message_label = new Gtk.Label (message.message);
 //		message_label.ellipsize = Pango.EllipsizeMode.END;
 		message_label.single_line_mode = false;

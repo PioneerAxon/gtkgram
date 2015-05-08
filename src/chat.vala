@@ -79,7 +79,7 @@ public class GtkGramChat : Gtk.ListBoxRow
 			}
 			catch (Error e)
 			{
-				warning ("Unable to load chat_image for %s : file %s : %s", chat_name, "", e.message);
+				warning ("Unable to load chat_image for %s : file %s : %s", chat_name, value, e.message);
 			}
 		}
 	}

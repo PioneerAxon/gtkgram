@@ -13,6 +13,7 @@ public class GtkGramChatManager
 	private static string download_directory;
 
 	private static GLib.HashTable<int64?, GtkGramChat> chat_table;
+	private static GLib.HashTable<int64?, GtkGramUser> user_table;
 
 	public GtkGramChatManager (owned GtkGramChatList list, owned Gtk.Stack stack, owned Gtk.ApplicationWindow main_window)
 	{
@@ -104,6 +105,7 @@ public class GtkGramChatManager
 
 		GLib.Timeout.add (50, ev_base_loop);
 		chat_table = new GLib.HashTable<int64?, GtkGramChat> (int64_hash, int64_equal);
+		user_table = new GLib.HashTable<int64?, GtkGramUser> (int64_hash, int64_equal);
 		t_state.login ();
 	}
 
@@ -171,6 +173,8 @@ public class GtkGramChatManager
 
 	private void on_user_update (TelegramUser user, UpdateFlags flags)
 	{
+		if (!user_table.contains (user.id))
+			user_table.insert (user.id, GtkGramConverter.to_GtkGramUser (user));
 		if ((flags & UpdateFlags.PHOTO) != 0)
 		{
 			t_state.get_photo (user.photo, (success, filename, id) => {
@@ -178,6 +182,19 @@ public class GtkGramChatManager
 				{
 					GtkGramChat _chat = chat_table.lookup (id);
 					_chat.chat_image = filename;
+				}
+				if (user_table.contains (id) && filename != null && filename != "")
+				{
+					GtkGramUser _user = user_table.lookup (id);
+					try
+					{
+						_user.image = new Gdk.Pixbuf.from_file_at_size (filename, 50, 50);
+					}
+					catch (Error e)
+					{
+						_user.image = null;
+						warning ("Unable to load user_image for %lld : file %s : %s", _user.user_id, filename, e.message);
+					}
 				}
 			}, user.id);
 		}
@@ -219,4 +236,13 @@ public class GtkGramChatManager
 		t_state.get_chat_list (update_list);
 	}
 
+
+	public static GtkGramUser? get_user (int64 id)
+	{
+		if (user_table.contains (id))
+		{
+			return user_table.lookup (id);
+		}
+		return null;
+	}
 }

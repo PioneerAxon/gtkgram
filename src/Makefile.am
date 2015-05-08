@@ -21,6 +21,7 @@ gtkgram_SOURCES = \
 		  chat-manager.vala\
 		  chat-message.vala\
 		  chat.vala\
+		  user.vala\
 		  gtkgram.vala\
 	  	  main-window.vala\
 		  ui_strings.vala\

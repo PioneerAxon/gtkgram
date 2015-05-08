@@ -33,4 +33,14 @@ public class GtkGramConverter
 		}
 		return message;
 	}
+
+	public static GtkGramUser to_GtkGramUser (TelegramUser u)
+	{
+		GtkGramUser user = new GtkGramUser ();
+		user.user_id = u.id;
+		user.firstname = u.first_name;
+		user.lastname = u.last_name;
+		user.phone = u.phone;
+		return user;
+	}
 }

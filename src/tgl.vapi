@@ -231,6 +231,11 @@ namespace Telegram
 		[CCode (cname = "id.id")]
 		int64 id;
 		TelegramPhoto photo;
+		string? first_name;
+		string? last_name;
+		string? real_first_name;
+		string? real_last_name;
+		string phone;
 	}
 
 	[CCode (cname = "struct tgl_photo", free_function = "", has_type_id = false)]
