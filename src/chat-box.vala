@@ -55,7 +55,7 @@ public class GtkGramChatBox : Gtk.Box
 		chat_input_scroll.hscrollbar_policy = Gtk.PolicyType.NEVER;
 		chat_input = new Gtk.TextView ();
 		chat_input.set_wrap_mode (Gtk.WrapMode.WORD_CHAR);
-		chat_input_scroll.add_with_viewport (chat_input);
+		chat_input_scroll.add (chat_input);
 
 		upload_file = new Gtk.Button.from_icon_name ("document-send-symbolic");
 		upload_image = new Gtk.Button.from_icon_name ("mail-send-symbolic");
