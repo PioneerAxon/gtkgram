@@ -34,6 +34,9 @@ namespace Telegram
 		[CCode (cname = "tgl_set_timer_methods")]
 		public void set_timer_methods (TelegramTimerMethods timer_methods);
 
+		[CCode (cname = "tw_do_get_history")]
+		public void get_history (TelegramPeerID id, int start_at, int count);
+
 
 
 

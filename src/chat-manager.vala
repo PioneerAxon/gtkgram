@@ -153,6 +153,7 @@ public class GtkGramChatManager
 				t_state.get_chat_info (peers [l], on_chat_info_update);
 			}
 			add_chat (peers[l].id, name, peer.last_message.date, is_group, GtkGramConverter.to_GtkGramMessage (peer.last_message), unread_counts [l]);
+			t_state.get_history (peers [l], 1, 30);
 		}
 	}
 

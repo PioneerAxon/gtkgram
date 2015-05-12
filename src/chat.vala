@@ -163,8 +163,11 @@ public class GtkGramChat : Gtk.ListBoxRow
 		if (message.message != null)
 		{
 			last_message = message.message;
-			notification.body = message.message;
-			show_notify = true;
+			if (message.is_unread)
+			{
+				notification.body = message.message;
+				show_notify = true;
+			}
 		}
 		if (message.is_unread)
 			unread_count++;

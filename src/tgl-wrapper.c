@@ -525,6 +525,25 @@ tw_do_load_photo (struct tgl_state* TLS, struct tgl_photo* photo, tw_callback_lo
 }
 
 static void
+tw_get_history_cb (struct tgl_state* TLS, void* callback_extra, int success, int size, struct tgl_messsage *list[])
+{
+	int l;
+	if (success)
+	{
+		for (l = 0; l < size; l++)
+		{
+			tw_msg_receive (TLS, list [l]);
+		}
+	}
+}
+
+void
+tw_do_get_history (struct tgl_state* TLS, tgl_peer_id_t id, int start_at, int limit)
+{
+	tgl_do_get_history_ext (TLS, id, start_at, limit, 0, tw_get_history_cb, NULL);
+}
+
+static void
 _tw_read_configs (struct tgl_state* TLS)
 {
 	assert (TLS);

@@ -21,6 +21,7 @@ public class GtkGramChatBox : Gtk.Box
 	private Gtk.Button emoticons;
 	private Gtk.Button send_text;
 	private Gtk.ListBox message_list;
+	private Gtk.Adjustment scroll;
 
 	private string chat_id;
 
@@ -34,6 +35,11 @@ public class GtkGramChatBox : Gtk.Box
 		scrolled_window.hscrollbar_policy = Gtk.PolicyType.NEVER;
 		scrolled_window.add_with_viewport (message_list);
 		scrolled_window.show_all ();
+		scroll = scrolled_window.vadjustment;
+		scrolled_window.size_allocate.connect (()=>
+			{
+		scroll.set_value (scroll.get_upper () - scroll.get_page_size ());
+			});
 
 		spinner = new Gtk.Spinner ();
 		var loading_row = new Gtk.ListBoxRow ();
