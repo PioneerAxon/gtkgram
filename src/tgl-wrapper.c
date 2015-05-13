@@ -544,6 +544,18 @@ tw_do_get_history (struct tgl_state* TLS, tgl_peer_id_t id, int start_at, int li
 }
 
 static void
+tw_send_message_cb (struct tgl_state* TLS, void* callback_extra, int success, struct tgl_message* message)
+{
+	//TODO: Handle the case when message sending fails.
+}
+
+void
+tw_do_send_message (struct tgl_state* TLS, tgl_peer_id_t id, char* message)
+{
+	tgl_do_send_message (TLS, id, message, strlen (message), tw_send_message_cb, NULL);
+}
+
+static void
 _tw_read_configs (struct tgl_state* TLS)
 {
 	assert (TLS);

@@ -56,6 +56,7 @@ public class GtkGramChatBox : Gtk.Box
 		chat_input = new Gtk.TextView ();
 		chat_input.set_wrap_mode (Gtk.WrapMode.WORD_CHAR);
 		chat_input_scroll.add (chat_input);
+		chat_input.key_press_event.connect (input_text_key_press_cb);
 
 		upload_file = new Gtk.Button.from_icon_name ("document-send-symbolic");
 		upload_image = new Gtk.Button.from_icon_name ("mail-send-symbolic");
@@ -76,7 +77,6 @@ public class GtkGramChatBox : Gtk.Box
 		pack_start (chat_input_box, false, true, 2);
 		message_list.set_sort_func (message_list_sort_func);
 		message_list.selection_mode = Gtk.SelectionMode.NONE;
-		chat_ready = false;
 	}
 
 	private void spinner_show ()
@@ -116,5 +116,26 @@ public class GtkGramChatBox : Gtk.Box
 		if (!r2.selectable)
 			return 1;
 		return (r1 as GtkGramChatMessage).time.compare ((r2 as GtkGramChatMessage).time);
+	}
+
+	private bool input_text_key_press_cb (Gdk.EventKey event)
+	{
+		bool with_shift = (event.state & (Gdk.ModifierType.SHIFT_MASK)) != 0;
+		if (with_shift)
+			return false;
+		if (event.keyval == Gdk.Key.Return || event.keyval == Gdk.Key.KP_Enter)
+		{
+			send_chat_message ();
+			chat_input.buffer.text = "";
+			return true;
+		}
+		return false;
+	}
+
+	private void send_chat_message ()
+	{
+		if (chat_input.buffer.text == null || chat_input.buffer.text == "" || chat_input.buffer.text.strip () == "")
+			return;
+		GtkGramChatManager.send_message (chat_id, chat_input.buffer.text);
 	}
 }

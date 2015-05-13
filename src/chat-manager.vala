@@ -14,6 +14,7 @@ public class GtkGramChatManager
 
 	private static GLib.HashTable<int64?, GtkGramChat> chat_table;
 	private static GLib.HashTable<int64?, GtkGramUser> user_table;
+	private static GLib.HashTable<int?, TelegramPeerID?> peer_id_table;
 
 	public GtkGramChatManager (owned GtkGramChatList list, owned Gtk.Stack stack, owned Gtk.ApplicationWindow main_window)
 	{
@@ -106,6 +107,7 @@ public class GtkGramChatManager
 		GLib.Timeout.add (50, ev_base_loop);
 		chat_table = new GLib.HashTable<int64?, GtkGramChat> (int64_hash, int64_equal);
 		user_table = new GLib.HashTable<int64?, GtkGramUser> (int64_hash, int64_equal);
+		peer_id_table = new GLib.HashTable<int?, TelegramPeerID?> (int_hash, int_equal);
 		t_state.login ();
 	}
 
@@ -138,6 +140,10 @@ public class GtkGramChatManager
 	{
 		for (int l = 0; l < size; l++)
 		{
+			if (!peer_id_table.contains (peers [l].id))
+			{
+				peer_id_table.insert (peers [l].id, peers [l]);
+			}
 			TelegramPeer peer = t_state.get_peer (peers [l]);
 			string name = "";
 			bool is_group = false;
@@ -245,5 +251,10 @@ public class GtkGramChatManager
 			return user_table.lookup (id);
 		}
 		return null;
+	}
+
+	public static void send_message (string chat_id, string message)
+	{
+		t_state.send_message (peer_id_table.lookup (int.parse (chat_id)), message);
 	}
 }

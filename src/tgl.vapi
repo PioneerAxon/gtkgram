@@ -37,6 +37,9 @@ namespace Telegram
 		[CCode (cname = "tw_do_get_history")]
 		public void get_history (TelegramPeerID id, int start_at, int count);
 
+		[CCode (cname = "tw_do_send_message")]
+		public void send_message (TelegramPeerID id, string message);
+
 
 
 
