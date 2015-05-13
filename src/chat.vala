@@ -162,11 +162,14 @@ public class GtkGramChat : Gtk.ListBoxRow
 		bool show_notify = false;
 		if (message.message != null)
 		{
-			last_message = message.message;
-			if (message.is_unread)
+			if (message.origin_time.compare (chat_time) > 0)
 			{
-				notification.body = message.message;
-				show_notify = true;
+				last_message = message.message;
+				if (message.is_unread)
+				{
+					notification.body = message.message;
+					show_notify = true;
+				}
 			}
 		}
 		if (message.is_unread)
