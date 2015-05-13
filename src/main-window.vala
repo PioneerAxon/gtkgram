@@ -39,7 +39,7 @@ public class GtkGramWindow : Gtk.ApplicationWindow
 		var chat_list_placeholder = new Gtk.Label ("No chats available.");
 		chat_list_placeholder.show ();
 		chat_list.set_placeholder (chat_list_placeholder);
-		scrolled_win.add_with_viewport (chat_list);
+		scrolled_win.add (chat_list);
 		main_hbox.pack_start (scrolled_win, false, true, 0);
 
 		Gtk.Separator sep = new Gtk.Separator (Gtk.Orientation.VERTICAL);

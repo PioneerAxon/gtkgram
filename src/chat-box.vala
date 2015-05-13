@@ -33,7 +33,7 @@ public class GtkGramChatBox : Gtk.Box
 		message_list = new Gtk.ListBox ();
 		var scrolled_window = new Gtk.ScrolledWindow (null, null);
 		scrolled_window.hscrollbar_policy = Gtk.PolicyType.NEVER;
-		scrolled_window.add_with_viewport (message_list);
+		scrolled_window.add (message_list);
 		scrolled_window.show_all ();
 		scroll = scrolled_window.vadjustment;
 		scrolled_window.size_allocate.connect (()=>
@@ -59,6 +59,7 @@ public class GtkGramChatBox : Gtk.Box
 		chat_input_scroll.add (chat_input);
 		chat_input.set_pixels_above_lines (7);
 		chat_input.key_press_event.connect (input_text_key_press_cb);
+		chat_input.buffer.changed.connect (input_text_changed_cb);
 
 		upload_file = new Gtk.Button.from_icon_name ("document-send-symbolic");
 		upload_image = new Gtk.Button.from_icon_name ("mail-send-symbolic");
@@ -79,6 +80,9 @@ public class GtkGramChatBox : Gtk.Box
 		pack_start (chat_input_box, false, true, 2);
 		message_list.set_sort_func (message_list_sort_func);
 		message_list.selection_mode = Gtk.SelectionMode.NONE;
+
+
+		input_text_changed_cb ();
 	}
 
 	private void spinner_show ()
@@ -132,6 +136,22 @@ public class GtkGramChatBox : Gtk.Box
 			return true;
 		}
 		return false;
+	}
+
+	private void input_text_changed_cb ()
+	{
+		if (chat_input.buffer.text == null || chat_input.buffer.text.strip () == "")
+		{
+			upload_file.sensitive = true;
+			upload_image.sensitive = true;
+			send_text.sensitive = false;
+		}
+		else
+		{
+			upload_file.sensitive = false;
+			upload_image.sensitive = false;
+			send_text.sensitive = true;
+		}
 	}
 
 	private void send_chat_message ()
