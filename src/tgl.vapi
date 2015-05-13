@@ -5,6 +5,9 @@ namespace Telegram
 	[Compact]
 	public class TelegramState
 	{
+
+		public int our_id;
+
 		[CCode (cname = "tgl_state_alloc")]
 		public TelegramState ();
 

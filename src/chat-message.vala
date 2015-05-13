@@ -24,6 +24,7 @@ public class GtkGramChatMessage : Gtk.ListBoxRow
 			if (_user.lastname != null && _user.lastname != "")
 				from_user_name = from_user_name + " " + _user.lastname;
 		}
+		bool our_message = (message.from_id == GtkGramChatManager.our_id);
 		this.from_name = new Gtk.Label (from_user_name);
 		this.message_label = new Gtk.Label (message.message);
 //		message_label.ellipsize = Pango.EllipsizeMode.END;
@@ -41,7 +42,26 @@ public class GtkGramChatMessage : Gtk.ListBoxRow
 		title_hbox.pack_end (time_label, false, false, 2);
 		vbox.pack_start (title_hbox, false, true, 2);
 		vbox.pack_end (message_label, false, false, 2);
+
+		Gtk.Image user_image;
+		if (_user.image == null)
+		{
+			user_image = new Gtk.Image.from_icon_name ("avatar-default-symbolic", Gtk.IconSize.DIALOG);
+		}
+		else
+		{
+			user_image = new Gtk.Image.from_pixbuf (_user.image);
+		}
+		user_image.valign = Gtk.Align.END;
+		if (!our_message)
+		{
+			hbox.pack_start (user_image, false, true, 3);
+		}
 		hbox.pack_start (vbox, true, true, 2);
+		if (our_message)
+		{
+			hbox.pack_start (user_image, false, true, 3);
+		}
 		add (hbox);
 		show_all ();
 	}

@@ -143,7 +143,6 @@ public class GtkGramChat : Gtk.ListBoxRow
 		if (last_message != null)
 			this.last_message = last_message.message;
 		this.unread_count = unread_count;
-		chat_box.insert_message (last_message);
 
 		notification = new Notify.Notification (chat_name, null, null);
 		try
@@ -160,9 +159,10 @@ public class GtkGramChat : Gtk.ListBoxRow
 	public void message_receive (GtkGramMessage message)
 	{
 		bool show_notify = false;
-		if (message.message != null)
+		if (message.origin_time.compare (chat_time) >= 0)
 		{
-			if (message.origin_time.compare (chat_time) > 0)
+			chat_time = message.origin_time;
+			if (message.message != null)
 			{
 				last_message = message.message;
 				if (message.is_unread)
@@ -179,7 +179,6 @@ public class GtkGramChat : Gtk.ListBoxRow
 			unread_count = 0;
 			show_notify = false;
 		}
-		chat_time = message.origin_time;
 		if (show_notify)
 		{
 			try
