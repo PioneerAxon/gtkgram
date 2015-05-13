@@ -53,9 +53,11 @@ public class GtkGramChatBox : Gtk.Box
 		chat_input_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 2);
 		var chat_input_scroll = new Gtk.ScrolledWindow (null, null);
 		chat_input_scroll.hscrollbar_policy = Gtk.PolicyType.NEVER;
+		chat_input_scroll.shadow_type = Gtk.ShadowType.ETCHED_IN;
 		chat_input = new Gtk.TextView ();
 		chat_input.set_wrap_mode (Gtk.WrapMode.WORD_CHAR);
 		chat_input_scroll.add (chat_input);
+		chat_input.set_pixels_above_lines (7);
 		chat_input.key_press_event.connect (input_text_key_press_cb);
 
 		upload_file = new Gtk.Button.from_icon_name ("document-send-symbolic");
