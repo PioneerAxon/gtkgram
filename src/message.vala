@@ -9,6 +9,18 @@ public class GtkGramMessage
 	public bool is_unread;
 	public GLib.DateTime origin_time;
 	public bool is_service;
+	public GtkGramMessageType type;
 	public string? message;
+}
 
+public enum GtkGramMessageType
+{
+	SERVICE,
+	TEXT,
+	IMAGE,
+	AUDIO,
+	VIDEO,
+	STICKER,
+	DOCUMENT,
+	CONTACT,
 }

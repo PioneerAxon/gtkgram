@@ -148,7 +148,7 @@ namespace Telegram
 		public int date;
 		public int service;
 		public string? message;
-		public TelegramMedia? media;
+		public TelegramMedia media;
 		public TelegramActionMessage? action;
 	}
 
@@ -161,6 +161,27 @@ namespace Telegram
 		CHAT,
 		GEO_CHAT,
 		ENCR_CHAT
+	}
+
+	[CCode (cname = "int", cprefix = "tgl_message_media_", has_type_id = false)]
+	public enum TelegramMediaType
+	{
+		none,
+		photo,
+		document,
+		contact,
+		unsupported
+	}
+
+	[CCode (cname = "int", cprefix = "FLAG_DOCUMENT_", has_type_id = false)]
+	[Flags]
+	public enum TelegramDocumentType
+	{
+		IMAGE,
+		STICKER,
+		ANIMATED,
+		AUDIO,
+		VIDEO,
 	}
 
 	[CCode (cname = "int", cprefix = "TGL_UPDATE_", has_type_id = false)]
@@ -247,6 +268,14 @@ namespace Telegram
 		string phone;
 	}
 
+	[CCode (cname = "struct tgl_document", free_function = "", has_type_id = false)]
+	public struct TelegramDocument
+	{
+		TelegramDocumentType flags;
+		string? caption;
+		string? mime_type;
+	}
+
 	[CCode (cname = "struct tgl_photo", free_function = "", has_type_id = false)]
 	public struct TelegramPhoto
 	{
@@ -255,6 +284,9 @@ namespace Telegram
 	[CCode (cname = "struct tgl_message_media", free_function = "", has_type_id = false)]
 	public struct TelegramMedia
 	{
+		TelegramMediaType type;
+		TelegramPhoto? photo;
+		TelegramDocument document;
 	}
 
 	[CCode (cname = "struct tgl_message_action", free_function = "", has_type_id = false)]

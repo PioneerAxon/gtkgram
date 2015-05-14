@@ -25,11 +25,58 @@ public class GtkGramConverter
 		if (message.is_service)
 		{
 			//TODO: Convert service messages to string here.
-			message.message = "";
+			message.message = "<SERVICE>";
+			message.type = GtkGramMessageType.SERVICE;
 		}
 		else
 		{
-			message.message = m.message;
+			if (m.media.type == TelegramMediaType.photo)
+			{
+				message.message = "<PHOTO>";
+				if (m.message != null && m.message != "")
+					message.message += m.message;
+				message.type = GtkGramMessageType.IMAGE;
+			}
+			else if (m.media.type == TelegramMediaType.document)
+			{
+				switch (m.media.document.flags)
+				{
+					case TelegramDocumentType.IMAGE:
+						message.message = "<IMAGE>";
+						message.type = GtkGramMessageType.IMAGE;
+						break;
+					case TelegramDocumentType.STICKER:
+						message.message = "<STICKER>";
+						message.type = GtkGramMessageType.STICKER;
+						break;
+					case TelegramDocumentType.ANIMATED:
+						message.message = "<GIF>";
+						message.type = GtkGramMessageType.IMAGE;
+						break;
+					case TelegramDocumentType.AUDIO:
+						message.message = "<AUDIO>";
+						message.type = GtkGramMessageType.AUDIO;
+						break;
+					case TelegramDocumentType.VIDEO:
+						message.message = "<VIDEO>";
+						message.type = GtkGramMessageType.VIDEO;
+						break;
+					default:
+						message.message = "<DOCUMENT>";
+						message.type = GtkGramMessageType.DOCUMENT;
+						break;
+				}
+			}
+			else if (m.media.type == TelegramMediaType.contact)
+			{
+				message.message = "<CONTACT>";
+				message.type = GtkGramMessageType.CONTACT;
+			}
+			else
+			{
+				message.message = m.message;
+				message.type = GtkGramMessageType.TEXT;
+			}
 		}
 		return message;
 	}
