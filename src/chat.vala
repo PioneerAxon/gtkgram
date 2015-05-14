@@ -23,7 +23,7 @@ public class GtkGramChat : Gtk.ListBoxRow
 		}
 		set
 		{
-			chat_text_label.set_markup (GLib.Markup.escape_text (value));
+			chat_text_label.set_markup (GLib.Markup.escape_text (value.replace ("\n", " ")));
 			_last_message = value;
 		}
 	}
